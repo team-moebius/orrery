@@ -18,7 +18,7 @@ import {
 } from './constants.ts';
 import type {
   Element, Relation, RelationResult, PairRelation, AllRelations, SpecialSals,
-  TransitItem, JwaEntry, InjongEntry,
+  TransitItem, JwaEntry, InjongEntry, JasiMethod,
 } from './types.ts';
 
 // =============================================
@@ -243,6 +243,7 @@ function dateFromMinutes(
  */
 export function calcPillarIndices(
   year: number, month: number, day: number, hour: number, min: number,
+  jasiMethod?: JasiMethod,
 ): [number, number, number, number, number] {
   const displ2min = minutesBetween(
     UNIT.year, UNIT.month, UNIT.day, UNIT.hour, UNIT.min,
@@ -287,37 +288,42 @@ export function calcPillarIndices(
   if (so24day < 0) so24day += 60;
   else if (so24day > 59) so24day -= 60;
 
-  // 시주
+  // 시주 (반시 체계: 30분 경계, 동경 127.5도 보정)
   let i: number;
   if (hour === 0 || (hour === 1 && min < 30)) {
-    i = 0;
+    i = 0; // 子 (조자시: 00:00~01:29)
   } else if ((hour === 1 && min >= 30) || hour === 2 || (hour === 3 && min < 30)) {
-    i = 1;
+    i = 1; // 丑
   } else if ((hour === 3 && min >= 30) || hour === 4 || (hour === 5 && min < 30)) {
-    i = 2;
+    i = 2; // 寅
   } else if ((hour === 5 && min >= 30) || hour === 6 || (hour === 7 && min < 30)) {
-    i = 3;
+    i = 3; // 卯
   } else if ((hour === 7 && min >= 30) || hour === 8 || (hour === 9 && min < 30)) {
-    i = 4;
+    i = 4; // 辰
   } else if ((hour === 9 && min >= 30) || hour === 10 || (hour === 11 && min < 30)) {
-    i = 5;
+    i = 5; // 巳
   } else if ((hour === 11 && min >= 30) || hour === 12 || (hour === 13 && min < 30)) {
-    i = 6;
+    i = 6; // 午
   } else if ((hour === 13 && min >= 30) || hour === 14 || (hour === 15 && min < 30)) {
-    i = 7;
+    i = 7; // 未
   } else if ((hour === 15 && min >= 30) || hour === 16 || (hour === 17 && min < 30)) {
-    i = 8;
+    i = 8; // 申
   } else if ((hour === 17 && min >= 30) || hour === 18 || (hour === 19 && min < 30)) {
-    i = 9;
+    i = 9; // 酉
   } else if ((hour === 19 && min >= 30) || hour === 20 || (hour === 21 && min < 30)) {
-    i = 10;
+    i = 10; // 戌
   } else if ((hour === 21 && min >= 30) || hour === 22 || (hour === 23 && min < 30)) {
-    i = 11;
+    i = 11; // 亥
   } else {
-    // hour === 23 && min >= 30
-    so24day += 1;
-    if (so24day === 60) so24day = 0;
-    i = 0;
+    // 야자시: hour === 23 && min >= 30
+    i = 0; // 子
+    const method = jasiMethod ?? 'unified';
+    if (method === 'unified') {
+      // 통자시: 23:30부터 일주를 다음날로 넘김
+      so24day += 1;
+      if (so24day === 60) so24day = 0;
+    }
+    // 'split' (야자시 인정): 일주 당일 유지, 시주 천간은 당일 일간 기준
   }
 
   t = so24day % 10;
@@ -391,8 +397,9 @@ export function calcSolarTerms(
 /** 4주를 60갑자 문자열로 반환 [년주, 월주, 일주, 시주] */
 export function getFourPillars(
   year: number, month: number, day: number, hour: number, minute: number,
+  jasiMethod?: JasiMethod,
 ): [string, string, string, string] {
-  const [, y, m, d, h] = calcPillarIndices(year, month, day, hour, minute);
+  const [, y, m, d, h] = calcPillarIndices(year, month, day, hour, minute, jasiMethod);
   return [HGANJI[y], HGANJI[m], HGANJI[d], HGANJI[h]];
 }
 
@@ -404,8 +411,9 @@ export function getFourPillars(
 export function getDaewoon(
   isMale: boolean,
   year: number, month: number, day: number, hour: number, minute: number,
+  jasiMethod?: JasiMethod,
 ): Array<{ ganzi: string; startDate: Date }> {
-  const [, sy, sm] = calcPillarIndices(year, month, day, hour, minute);
+  const [, sy, sm] = calcPillarIndices(year, month, day, hour, minute, jasiMethod);
 
   // 순행/역행 결정
   const yearStem = HGANJI[sy][0];

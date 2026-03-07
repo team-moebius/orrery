@@ -7,6 +7,11 @@ export type YinYang = '+' | '-';
 /** 성별 */
 export type Gender = 'M' | 'F';
 
+/** 자시법 (子時法) — 23:00~01:00 구간 일주 처리 방식 */
+export type JasiMethod = 'split' | 'unified';
+// 'split'   = 야자시 인정: 23:00~24:00 일주 당일 유지
+// 'unified' = 통자시: 23:00부터 일주 다음날로 넘김
+
 /** 생년월일시 입력 */
 export interface BirthInput {
   year: number;
@@ -17,6 +22,8 @@ export interface BirthInput {
   gender: Gender;
   /** 시간 모름 여부 */
   unknownTime?: boolean;
+  /** 자시법 (기본값: 'unified' 통자시) */
+  jasiMethod?: JasiMethod;
   /** 위도 (기본값: 37.5194 서울) */
   latitude?: number;
   /** 경도 (기본값: 127.0992 서울) */

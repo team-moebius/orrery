@@ -27,7 +27,7 @@ export function calculateSaju(input: BirthInput): SajuResult {
   const isMale = gender === 'M';
 
   // 사주 계산 (년, 월, 일, 시)
-  const [yp, mp, dp, hp] = getFourPillars(year, month, day, hour, minute);
+  const [yp, mp, dp, hp] = getFourPillars(year, month, day, hour, minute, input.jasiMethod);
 
   // 일간 (일주의 천간)
   const dayStem = dp[0];
@@ -74,7 +74,7 @@ export function calculateSaju(input: BirthInput): SajuResult {
   // 대운 계산 (시간 모름이면 정오 기준)
   const dwHour = input.unknownTime ? 12 : hour;
   const dwMinute = input.unknownTime ? 0 : minute;
-  const rawDaewoon = getDaewoon(isMale, year, month, day, dwHour, dwMinute);
+  const rawDaewoon = getDaewoon(isMale, year, month, day, dwHour, dwMinute, input.jasiMethod);
 
   const yearBranch = yp[1];
 

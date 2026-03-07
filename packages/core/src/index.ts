@@ -43,7 +43,7 @@ export type { City } from './cities.ts'
 
 // 타입
 export type {
-  Element, YinYang, Gender, BirthInput,
+  Element, YinYang, Gender, JasiMethod, BirthInput,
   StemInfo, Relation, Meteor, Spirit,
   Pillar, PillarDetail, DaewoonItem,
   RelationResult, PairRelation, AllRelations,

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import type { BirthInput, Gender } from '@orrery/core/types'
+import type { BirthInput, Gender, JasiMethod } from '@orrery/core/types'
 import { isKoreanDaylightTime } from '@orrery/core/natal'
 import type { City } from '@orrery/core/cities'
 import { SEOUL } from '@orrery/core/cities'
@@ -20,6 +20,7 @@ interface SavedFormState {
   minute: number
   gender: Gender
   unknownTime: boolean
+  jasiMethod: JasiMethod
   city: City | null
   manualCoords: boolean
   latitude: number
@@ -56,6 +57,8 @@ export default function BirthForm({ onSubmit }: Props) {
   const [minute, setMinute] = useState(saved?.minute ?? now.getMinutes())
   const [gender, setGender] = useState<Gender>(saved?.gender ?? 'M')
   const [unknownTime, setUnknownTime] = useState(saved?.unknownTime ?? false)
+  const [jasiMethod, setJasiMethod] = useState<JasiMethod>(saved?.jasiMethod ?? 'unified')
+  const [showAdvanced, setShowAdvanced] = useState(false)
   const [selectedCity, setSelectedCity] = useState<City | null>(saved?.city ?? SEOUL)
   const [manualCoords, setManualCoords] = useState(saved?.manualCoords ?? false)
   const [latitude, setLatitude] = useState(saved?.latitude ?? SEOUL.lat)
@@ -72,7 +75,7 @@ export default function BirthForm({ onSubmit }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const state: SavedFormState = {
-      year, month, day, hour, minute, gender, unknownTime,
+      year, month, day, hour, minute, gender, unknownTime, jasiMethod,
       city: selectedCity, manualCoords, latitude, longitude,
     }
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) } catch { /* quota exceeded — ignore */ }
@@ -82,6 +85,7 @@ export default function BirthForm({ onSubmit }: Props) {
       minute: unknownTime ? 0 : minute,
       gender,
       unknownTime,
+      ...(!unknownTime && { jasiMethod }),
       latitude,
       longitude,
     })
@@ -250,6 +254,57 @@ export default function BirthForm({ onSubmit }: Props) {
               <CityCombobox selectedCity={selectedCity} onSelect={handleCitySelect} />
             )}
           </fieldset>
+
+          {/* 고급 설정 */}
+          {!unknownTime && (
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(v => !v)}
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg
+                  className={`w-3 h-3 transition-transform ${showAdvanced ? 'rotate-90' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+                고급 설정
+              </button>
+              {showAdvanced && (
+                <fieldset className="mt-2">
+                  <legend className="text-xs font-medium text-gray-500 mb-2">자시법 (子時法)</legend>
+                  <div className="inline-flex h-10 rounded-lg bg-gray-100 p-1">
+                    {([
+                      { value: 'unified' as const, label: '통자시' },
+                      { value: 'split' as const, label: '야자시' },
+                    ]).map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setJasiMethod(opt.value)}
+                        className={`px-4 text-sm rounded-md transition-all ${
+                          jasiMethod === opt.value
+                            ? 'bg-white text-gray-800 shadow-sm font-medium'
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-1.5 text-xs text-gray-400 leading-relaxed">
+                    {jasiMethod === 'unified'
+                      ? '23:30부터 子시, 일주를 다음날로 넘깁니다.'
+                      : '23:30~00:00(야자시)은 子시이나, 일주는 당일 유지합니다.'}
+                  </p>
+                </fieldset>
+              )}
+            </div>
+          )}
 
           {/* 계산 버튼 */}
           <button
