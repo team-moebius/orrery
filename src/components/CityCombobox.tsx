@@ -8,7 +8,7 @@ interface Props {
 }
 
 const inputClass =
-  'w-full h-10 px-3 border border-gray-200 rounded-lg text-sm text-gray-800 bg-white ' +
+  'w-full h-10 px-3 border border-gray-200 rounded-lg text-base text-gray-800 bg-white ' +
   'focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-400 transition-all'
 
 /** 포커스 시 보여줄 기본 도시 목록 (한국 주요 도시) */
@@ -108,7 +108,7 @@ export default function CityCombobox({ selectedCity, onSelect }: Props) {
   function renderOptions() {
     if (flatResults.length === 0) {
       return (
-        <li className="px-3 py-2 text-sm text-gray-400 text-center">
+        <li className="px-3 py-2 text-base text-gray-400 text-center">
           검색 결과 없음
         </li>
       )
@@ -119,7 +119,7 @@ export default function CityCombobox({ selectedCity, onSelect }: Props) {
 
     if (koreanResults.length > 0) {
       items.push(
-        <li key="header-kr" className="px-3 pt-1.5 pb-1 text-xs font-medium text-gray-400" role="presentation">
+        <li key="header-kr" className="px-3 pt-1.5 pb-1 text-sm font-medium text-gray-400" role="presentation">
           한국
         </li>
       )
@@ -136,7 +136,7 @@ export default function CityCombobox({ selectedCity, onSelect }: Props) {
         )
       }
       items.push(
-        <li key="header-world" className="px-3 pt-1.5 pb-1 text-xs font-medium text-gray-400" role="presentation">
+        <li key="header-world" className="px-3 pt-1.5 pb-1 text-sm font-medium text-gray-400" role="presentation">
           세계
         </li>
       )
@@ -157,7 +157,7 @@ export default function CityCombobox({ selectedCity, onSelect }: Props) {
         key={`${city.name}-${city.country ?? 'kr'}`}
         role="option"
         aria-selected={isHighlighted}
-        className={`px-3 py-2 text-sm cursor-pointer transition-colors ${
+        className={`px-3 py-2 text-base cursor-pointer transition-colors ${
           isHighlighted ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'
         }`}
         onMouseDown={e => handleOptionMouseDown(e, city)}

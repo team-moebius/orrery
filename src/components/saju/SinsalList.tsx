@@ -52,12 +52,12 @@ export default function SinsalList({ sals }: Props) {
 
   return (
     <section>
-      <h3 className="text-sm font-medium text-gray-700 mb-2">神殺</h3>
+      <h3 className="text-base font-medium text-gray-700 mb-2">神殺</h3>
       <div className="flex flex-wrap gap-2">
         {items.map(item => (
           <span
             key={item.label}
-            className={`text-sm px-2 py-0.5 rounded ${
+            className={`text-base px-2 py-0.5 rounded ${
               item.type === 'good'
                 ? 'bg-blue-50 text-blue-700'
                 : 'bg-red-50 text-red-700'

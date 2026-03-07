@@ -43,7 +43,7 @@ function PalaceCell({ palace, daxianRange }: { palace: ZiweiPalace; daxianRange?
   const shaStars = palace.stars.filter(s => SHA_STAR_NAMES.has(s.name))
 
   return (
-    <div className="flex flex-col justify-between h-full p-1.5 text-xs leading-tight">
+    <div className="flex flex-col justify-between h-full p-1.5 text-sm leading-tight">
       {/* 궁명 + 신궁 + 간지 */}
       <div>
         <div className="flex items-baseline justify-between gap-1">
@@ -51,7 +51,7 @@ function PalaceCell({ palace, daxianRange }: { palace: ZiweiPalace; daxianRange?
             {palace.name}
             {palace.isShenGong && <span className="text-purple-600 ml-0.5">·身</span>}
           </span>
-          <span className="text-gray-400 font-hanja text-[10px]">{palace.ganZhi}</span>
+          <span className="text-gray-400 font-hanja text-xs">{palace.ganZhi}</span>
         </div>
 
         {/* 주성 */}
@@ -88,7 +88,7 @@ function PalaceCell({ palace, daxianRange }: { palace: ZiweiPalace; daxianRange?
 
       {/* 대한 나이 범위 */}
       {daxianRange && (
-        <div className="text-[10px] text-gray-400 text-right mt-1">{daxianRange}</div>
+        <div className="text-xs text-gray-400 text-right mt-1">{daxianRange}</div>
       )}
     </div>
   )
@@ -140,7 +140,7 @@ export default function MingPanGrid({ chart }: Props) {
           className="border-r border-b border-gray-300 flex flex-col items-center justify-center p-3"
           style={{ gridRow: '2 / 4', gridColumn: '2 / 4' }}
         >
-          <div className="space-y-0.5 text-xs text-gray-600 w-full max-w-[200px]">
+          <div className="space-y-0.5 text-sm text-gray-600 w-full max-w-[200px]">
             <div>
               <span className="text-gray-400">陽曆:</span>{' '}
               {chart.solarYear}年 {chart.solarMonth}月 {chart.solarDay}日 {chart.hour}時 {chart.minute}分

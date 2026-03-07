@@ -13,7 +13,7 @@ export default function HouseTable({ houses }: Props) {
     <div>
       <div className="grid grid-cols-2 gap-x-4">
         {[left, right].map((col, ci) => (
-          <table key={ci} className="w-full text-sm">
+          <table key={ci} className="w-full text-base">
             <tbody>
               {col.map(h => (
                 <tr key={h.number} className="border-b border-gray-50">

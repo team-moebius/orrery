@@ -21,11 +21,11 @@ export default function TransitView({ natalPillars }: Props) {
   return (
     <section>
       <div className="flex items-center gap-3 mb-2">
-        <h3 className="text-sm font-medium text-gray-700">運勢</h3>
+        <h3 className="text-base font-medium text-gray-700">運勢</h3>
         <select
           value={months}
           onChange={e => setMonths(Number(e.target.value))}
-          className="text-xs border border-gray-300 rounded px-1.5 py-0.5 text-gray-600"
+          className="text-sm border border-gray-300 rounded px-1.5 py-0.5 text-gray-600"
         >
           <option value={1}>1개월</option>
           <option value={3}>3개월</option>
@@ -33,7 +33,7 @@ export default function TransitView({ natalPillars }: Props) {
         </select>
         <button
           onClick={() => setBackward(!backward)}
-          className={`text-xs px-2 py-0.5 rounded border transition-colors ${
+          className={`text-sm px-2 py-0.5 rounded border transition-colors ${
             backward
               ? 'bg-gray-100 border-gray-400 text-gray-700'
               : 'border-gray-300 text-gray-500'
@@ -44,9 +44,9 @@ export default function TransitView({ natalPillars }: Props) {
       </div>
 
       {transits.length === 0 ? (
-        <p className="text-sm text-gray-400">({direction} {months}개월간 특별한 관계 없음)</p>
+        <p className="text-base text-gray-400">({direction} {months}개월간 특별한 관계 없음)</p>
       ) : (
-        <div className="text-xs space-y-0.5 max-h-80 overflow-y-auto">
+        <div className="text-sm space-y-0.5 max-h-80 overflow-y-auto">
           {transits.map((tr, i) => {
             const date = tr.date
             const dateStr = `${String(date.getMonth() + 1).padStart(2, ' ')}월 ${String(date.getDate()).padStart(2, ' ')}일`

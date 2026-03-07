@@ -22,8 +22,8 @@ export default function DaewoonTable({ daewoon, unknownTime }: Props) {
   if (daewoon.length === 0) {
     return (
       <section>
-        <h3 className="text-sm font-medium text-gray-700 mb-2">大運</h3>
-        <p className="text-sm text-gray-400">대운 데이터가 없습니다.</p>
+        <h3 className="text-base font-medium text-gray-700 mb-2">大運</h3>
+        <p className="text-base text-gray-400">대운 데이터가 없습니다.</p>
       </section>
     )
   }
@@ -42,9 +42,9 @@ export default function DaewoonTable({ daewoon, unknownTime }: Props) {
 
   return (
     <section>
-      <h3 className="text-sm font-medium text-gray-700 mb-2">大運</h3>
+      <h3 className="text-base font-medium text-gray-700 mb-2">大運</h3>
       {unknownTime && (
-        <p className="text-xs text-amber-600 mb-2">
+        <p className="text-sm text-amber-600 mb-2">
           출생 시간 없이 정오(12:00) 기준으로 계산하여 대운 시작 시기에 수개월 오차가 있을 수 있습니다.
         </p>
       )}
@@ -61,16 +61,16 @@ export default function DaewoonTable({ daewoon, unknownTime }: Props) {
                 className={`flex flex-col items-center gap-0.5 rounded-lg px-1 py-1 ${isActive ? 'ring-2 ring-amber-400 bg-amber-50' : ''}`}
               >
                 <span className="text-xs text-gray-500">{dw.age}세</span>
-                <span className={`text-xs ${stemColorClass(stem)}`}>{dw.stemSipsin}</span>
+                <span className={`text-sm ${stemColorClass(stem)}`}>{dw.stemSipsin}</span>
                 <span className={`inline-flex items-center justify-center w-8 h-8 leading-none text-base rounded pb-[2px] ${stemSolidBgClass(stem)}`}>
                   {stem}
                 </span>
                 <span className={`inline-flex items-center justify-center w-8 h-8 leading-none text-base rounded pb-[2px] ${branchSolidBgClass(branch)}`}>
                   {branch}
                 </span>
-                <span className={`text-xs ${branchColorClass(branch)}`}>{dw.branchSipsin}</span>
-                <span className="text-xs text-gray-500">{dw.unseong}</span>
-                <span className="text-xs text-gray-500">{dw.sinsal}</span>
+                <span className={`text-sm ${branchColorClass(branch)}`}>{dw.branchSipsin}</span>
+                <span className="text-sm text-gray-500">{dw.unseong}</span>
+                <span className="text-sm text-gray-500">{dw.sinsal}</span>
               </div>
             )
           })}

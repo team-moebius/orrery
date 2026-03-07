@@ -18,9 +18,9 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-center text-sm">
+      <table className="w-full text-center text-base">
         <thead>
-          <tr className="text-xs text-gray-500">
+          <tr className="text-sm text-gray-500">
             <td className="py-1 pr-2 text-right w-12"></td>
             {labels.map(label => (
               <th key={label} className="py-1 px-3 font-normal">{label}</th>
@@ -29,7 +29,7 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
         </thead>
         <tbody className="font-hanja">
           {/* 천간 십신 */}
-          <tr className="text-xs text-gray-600">
+          <tr className="text-sm text-gray-600">
             <td className="pr-2 text-right text-gray-400">십신</td>
             {pillars.map((p, i) => (
               <td key={i} className={`py-0.5 px-3 ${i === 0 && unknownTime ? 'text-gray-300' : stemColorClass(p.pillar.stem)}`}>
@@ -40,7 +40,7 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
 
           {/* 천간 */}
           <tr className="text-2xl">
-            <td className="pr-2 text-right text-xs text-gray-400">천간</td>
+            <td className="pr-2 text-right text-sm text-gray-400">천간</td>
             {pillars.map((p, i) => (
               <td key={i} className="py-1 px-3">
                 {i === 0 && unknownTime
@@ -53,7 +53,7 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
 
           {/* 지지 */}
           <tr className="text-2xl">
-            <td className="pr-2 text-right text-xs text-gray-400">지지</td>
+            <td className="pr-2 text-right text-sm text-gray-400">지지</td>
             {pillars.map((p, i) => (
               <td key={i} className="py-1 px-3">
                 {i === 0 && unknownTime
@@ -65,7 +65,7 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
           </tr>
 
           {/* 지지 십신 */}
-          <tr className="text-xs text-gray-600">
+          <tr className="text-sm text-gray-600">
             <td className="pr-2 text-right text-gray-400">십신</td>
             {pillars.map((p, i) => (
               <td key={i} className={`py-0.5 px-3 ${i === 0 && unknownTime ? 'text-gray-300' : branchColorClass(p.pillar.branch)}`}>
@@ -82,7 +82,7 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
           </tr>
 
           {/* 운성 */}
-          <tr className="text-xs text-gray-600">
+          <tr className="text-sm text-gray-600">
             <td className="pr-2 text-right text-gray-400">운성</td>
             {pillars.map((p, i) => (
               <td key={i} className={`py-0.5 px-3 ${i === 0 && unknownTime ? 'text-gray-300' : ''}`}>
@@ -92,7 +92,7 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
           </tr>
 
           {/* 신살 */}
-          <tr className="text-xs text-gray-600">
+          <tr className="text-sm text-gray-600">
             <td className="pr-2 text-right text-gray-400">신살</td>
             {pillars.map((p, i) => (
               <td key={i} className={`py-0.5 px-3 ${i === 0 && unknownTime ? 'text-gray-300' : ''}`}>
@@ -102,7 +102,7 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
           </tr>
 
           {/* 지장간 */}
-          <tr className="text-xs">
+          <tr className="text-sm">
             <td className="pr-2 text-right text-gray-400">장간</td>
             {pillars.map((p, i) => (
               <td key={i} className="py-0.5 px-3">

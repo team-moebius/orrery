@@ -70,10 +70,10 @@ export default function RelationList({ relations, pillars }: Props) {
 
   return (
     <section>
-      <h3 className="text-sm font-medium text-gray-700 mb-2">八字關係</h3>
+      <h3 className="text-base font-medium text-gray-700 mb-2">八字關係</h3>
       <div className="space-y-1.5">
         {lines.map((line, i) => (
-          <div key={i} className="flex items-center gap-2 text-sm">
+          <div key={i} className="flex items-center gap-2 text-base">
             {line.label && (
               <span className="text-gray-400 w-10 shrink-0">{line.label}</span>
             )}
@@ -81,7 +81,7 @@ export default function RelationList({ relations, pillars }: Props) {
               {line.tags.map((tag, j) => (
                 <span
                   key={j}
-                  className={`px-2 py-0.5 rounded text-xs font-medium ${KIND_STYLES[tag.kind]}`}
+                  className={`px-2 py-0.5 rounded text-sm font-medium ${KIND_STYLES[tag.kind]}`}
                 >
                   {tag.text}
                 </span>

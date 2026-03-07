@@ -26,7 +26,7 @@ export default function SajuView({ input }: Props) {
       {/* 명식 테이블 */}
       <section className="bg-white rounded-lg border border-gray-200 p-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-medium text-gray-700">四柱八字</h2>
+          <h2 className="text-base font-medium text-gray-700">四柱八字</h2>
           <CopyButton getText={() => sajuToText(result)} label="AI 해석용 복사" />
         </div>
         <PillarTable pillars={result.pillars} unknownTime={input.unknownTime} />
