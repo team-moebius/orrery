@@ -70,11 +70,17 @@ describe('자시법 (JasiMethod)', () => {
     expect(unified).toEqual(split)
   })
 
-  it('split과 unified의 시주 천간이 다름 (일간이 다르므로)', () => {
-    const [, , , hpUnified] = getFourPillars(2000, 1, 1, 23, 30, 'unified')
-    const [, , , hpSplit] = getFourPillars(2000, 1, 1, 23, 30, 'split')
-    // 시주 천간은 일간에서 파생되므로, 일주가 다르면 시주 천간도 다름
-    expect(hpUnified[0]).not.toBe(hpSplit[0])
+  it('split과 unified의 시주가 동일 (일주만 다름)', () => {
+    const [, , dpUnified, hpUnified] = getFourPillars(2000, 1, 1, 23, 30, 'unified')
+    const [, , dpSplit, hpSplit] = getFourPillars(2000, 1, 1, 23, 30, 'split')
+    expect(hpUnified).toBe(hpSplit) // 시주 동일
+    expect(dpUnified).not.toBe(dpSplit) // 일주만 다름
+  })
+
+  it('야자시: 2006-02-17 23:30 — 시주 壬子, 일주 丁丑', () => {
+    const [, , dp, hp] = getFourPillars(2006, 2, 17, 23, 30, 'split')
+    expect(hp).toBe('壬子')
+    expect(dp).toBe('丁丑')
   })
 
   it('00:30(조자시)은 두 모드 모두 같은 결과', () => {

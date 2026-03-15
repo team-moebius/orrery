@@ -326,7 +326,10 @@ export function calcPillarIndices(
     // 'split' (야자시 인정): 일주 당일 유지, 시주 천간은 당일 일간 기준
   }
 
-  t = so24day % 10;
+  // 야자시(split): 일주는 당일 유지하되, 시주 천간은 다음날 일간 기준
+  const isYajasi = i === 0 && hour === 23 && jasiMethod === 'split';
+  const dayForHour = isYajasi ? (so24day + 1) % 60 : so24day;
+  t = dayForHour % 10;
   t = t % 5;
   t = t * 12 + i;
   const so24hour = t;
