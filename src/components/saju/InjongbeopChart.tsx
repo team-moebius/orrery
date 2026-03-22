@@ -23,8 +23,8 @@ export default function InjongbeopChart({ injongbeop, pillars }: Props) {
 
   return (
     <section>
-      <h3 className="text-base font-medium text-gray-700 mb-2">引從法</h3>
-      <p className="text-sm text-gray-400 mb-2">
+      <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-2">引從法</h3>
+      <p className="text-sm text-gray-400 dark:text-gray-500 mb-2">
         日支 <span className="font-hanja">{dayBranch}</span> 지장간:
         <span className="font-hanja ml-1">{jigangSummary}</span>
         — 누락 십성의 양간 인종
@@ -33,13 +33,13 @@ export default function InjongbeopChart({ injongbeop, pillars }: Props) {
         {injongbeop.map(entry => (
           <div
             key={entry.category}
-            className="flex items-center gap-1.5 text-base border border-gray-200 rounded px-2.5 py-1.5"
+            className="flex items-center gap-1.5 text-base border border-gray-200 dark:border-gray-700 rounded px-2.5 py-1.5"
           >
             <span className={`font-hanja ${stemColorClass(entry.yangStem)}`}>
               {entry.yangStem}{ELEMENT_HANJA[STEM_INFO[entry.yangStem]?.element ?? ''] ?? ''}
             </span>
-            <span className="text-gray-500 font-hanja">{entry.category}</span>
-            <span className="text-gray-400">→</span>
+            <span className="text-gray-500 dark:text-gray-400 font-hanja">{entry.category}</span>
+            <span className="text-gray-400 dark:text-gray-500">→</span>
             <span className="font-hanja">{entry.unseong}從</span>
           </div>
         ))}

@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import BirthForm from './BirthForm.tsx'
 import Guide from './Guide.tsx'
 import CopyButton from './CopyButton.tsx'
+import ThemeToggle from './ThemeToggle.tsx'
 import SajuView from './saju/SajuView.tsx'
 import ZiweiView from './ziwei/ZiweiView.tsx'
 import NatalView from './natal/NatalView.tsx'
@@ -26,7 +27,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 relative">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 relative">
+      <ThemeToggle />
       <a
         href="https://github.com/rath/orrery"
         target="_blank"
@@ -42,22 +44,22 @@ export default function App() {
       </a>
       <main className="max-w-2xl mx-auto px-4 py-6">
         <div className="text-center mb-6">
-          <p className="text-base text-gray-500 tracking-wide">
-            서버 없이 브라우저에서 동작하는<br className="sm:hidden" /> <span className="font-medium text-gray-700">사주팔자 · 자미두수 · 서양 점성술</span> 계산기
+          <p className="text-base text-gray-500 dark:text-gray-400 tracking-wide">
+            서버 없이 브라우저에서 동작하는<br className="sm:hidden" /> <span className="font-medium text-gray-700 dark:text-gray-200">사주팔자 · 자미두수 · 서양 점성술</span> 계산기
           </p>
-          <p className="text-sm text-gray-400 mt-1">십신, 대운, 명반, 사화, 출생차트까지 한 번에</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">십신, 대운, 명반, 사화, 출생차트까지 한 번에</p>
         </div>
         <BirthForm onSubmit={handleSubmit} />
 
         {birthInput && (
           <>
             {/* 탭 네비게이션 */}
-            <div ref={resultsRef} className="flex items-center border-b border-gray-200 mt-6 mb-4">
+            <div ref={resultsRef} className="flex items-center border-b border-gray-200 dark:border-gray-700 mt-6 mb-4">
               <button
                 className={`px-2 sm:px-4 py-2 text-sm sm:text-base font-medium whitespace-nowrap border-b-2 transition-colors ${
                   tab === 'saju'
-                    ? 'border-gray-800 text-gray-800'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-gray-800 text-gray-800 dark:border-gray-200 dark:text-gray-200'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
                 onClick={() => setTab('saju')}
               >
@@ -66,8 +68,8 @@ export default function App() {
               <button
                 className={`px-2 sm:px-4 py-2 text-sm sm:text-base font-medium whitespace-nowrap border-b-2 transition-colors ${
                   tab === 'ziwei'
-                    ? 'border-gray-800 text-gray-800'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-gray-800 text-gray-800 dark:border-gray-200 dark:text-gray-200'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
                 onClick={() => setTab('ziwei')}
               >
@@ -76,8 +78,8 @@ export default function App() {
               <button
                 className={`px-2 sm:px-4 py-2 text-sm sm:text-base font-medium whitespace-nowrap border-b-2 transition-colors ${
                   tab === 'natal'
-                    ? 'border-gray-800 text-gray-800'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-gray-800 text-gray-800 dark:border-gray-200 dark:text-gray-200'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
                 onClick={() => setTab('natal')}
               >
@@ -109,8 +111,8 @@ export default function App() {
 
         <Guide />
       </main>
-      <footer className="text-center text-xs text-gray-400 py-6">
-        <p>&copy; 2026 Jang-Ho Hwang &middot; <a href="https://x.com/xrath" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600">@xrath</a> &middot; <a href="https://x.com/xrath/status/2022548658562937028" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600">소개글</a></p>
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-500 py-6">
+        <p>&copy; 2026 Jang-Ho Hwang &middot; <a href="https://x.com/xrath" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 dark:hover:text-gray-300">@xrath</a> &middot; <a href="https://x.com/xrath/status/2022548658562937028" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 dark:hover:text-gray-300">소개글</a></p>
       </footer>
     </div>
   )

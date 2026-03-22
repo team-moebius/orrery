@@ -42,11 +42,11 @@ const currentYear = now.getFullYear()
 const saved = loadSaved()
 
 const selectClass =
-  'w-full h-10 pl-3 pr-8 border border-gray-200 rounded-lg text-base text-gray-800 bg-white ' +
+  'w-full h-10 pl-3 pr-8 border border-gray-200 dark:border-gray-700 rounded-lg text-base text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900 ' +
   'appearance-none bg-[length:16px_16px] bg-[position:right_8px_center] bg-no-repeat ' +
   "bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%239ca3af%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] " +
-  'focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-400 ' +
-  'transition-all disabled:opacity-40 disabled:bg-gray-50'
+  'focus:outline-none focus:ring-2 focus:ring-gray-800/20 dark:focus:ring-gray-200/20 focus:border-gray-400 dark:focus:border-gray-500 ' +
+  'transition-all disabled:opacity-40 disabled:bg-gray-50 dark:disabled:bg-gray-800'
 
 
 export default function BirthForm({ onSubmit }: Props) {
@@ -92,7 +92,7 @@ export default function BirthForm({ onSubmit }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm dark:shadow-none">
       <div className="flex flex-col items-center md:flex-row md:items-start gap-5">
         {/* 로고 */}
         <div className="flex flex-col items-center shrink-0">
@@ -101,14 +101,14 @@ export default function BirthForm({ onSubmit }: Props) {
             alt="혼천의"
             className="w-48 md:w-64"
           />
-          <span className="text-base text-gray-400 font-hanja -mt-1">혼천의(渾天儀)</span>
+          <span className="text-base text-gray-400 dark:text-gray-500 font-hanja -mt-1">혼천의(渾天儀)</span>
         </div>
 
         {/* 폼 필드 전체 */}
         <div className="w-full min-w-0">
           {/* 생년월일 */}
           <fieldset>
-            <legend className="text-sm font-medium text-gray-500 mb-2">생년월일 (양력)</legend>
+            <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">생년월일 (양력)</legend>
             <div className="grid grid-cols-3 gap-2">
               <select
                 value={year}
@@ -142,7 +142,7 @@ export default function BirthForm({ onSubmit }: Props) {
           </fieldset>
 
           {isKDT && (
-            <div className="mt-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-700 leading-relaxed">
+            <div className="mt-2 px-3 py-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg text-sm text-amber-700 dark:text-amber-400 leading-relaxed">
               88올림픽 하계표준시(KDT, UTC+10) 적용 기간입니다. 모든 계산에 자동 반영됩니다.
             </div>
           )}
@@ -150,7 +150,7 @@ export default function BirthForm({ onSubmit }: Props) {
           {/* 시간 + 성별 */}
           <fieldset className="mt-4">
             <div className="flex items-center justify-between mb-2">
-              <legend className="text-sm font-medium text-gray-500">시간</legend>
+              <legend className="text-sm font-medium text-gray-500 dark:text-gray-400">시간</legend>
               <label className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
@@ -158,8 +158,8 @@ export default function BirthForm({ onSubmit }: Props) {
                   onChange={e => setUnknownTime(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-8 h-[18px] bg-gray-200 rounded-full peer-checked:bg-gray-800 relative transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:w-3 after:h-3 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-3.5" />
-                <span className="text-sm text-gray-500">모름</span>
+                <div className="w-8 h-[18px] bg-gray-200 dark:bg-gray-700 rounded-full peer-checked:bg-gray-800 dark:peer-checked:bg-gray-200 relative transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:w-3 after:h-3 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-3.5" />
+                <span className="text-sm text-gray-500 dark:text-gray-400">모름</span>
               </label>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-[1fr_1fr_auto] gap-2 items-end">
@@ -186,7 +186,7 @@ export default function BirthForm({ onSubmit }: Props) {
 
               {/* 성별 — segmented control */}
               <div>
-                <div className="inline-flex h-10 rounded-lg bg-gray-100 p-1">
+                <div className="inline-flex h-10 rounded-lg bg-gray-100 dark:bg-gray-800 p-1">
                   {(['M', 'F'] as const).map(g => (
                     <button
                       key={g}
@@ -194,8 +194,8 @@ export default function BirthForm({ onSubmit }: Props) {
                       onClick={() => setGender(g)}
                       className={`px-4 text-base rounded-md transition-all ${
                         gender === g
-                          ? 'bg-white text-gray-800 shadow-sm font-medium'
-                          : 'text-gray-500 hover:text-gray-700'
+                          ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm font-medium'
+                          : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                       }`}
                     >
                       {g === 'M' ? '남' : '여'}
@@ -209,7 +209,7 @@ export default function BirthForm({ onSubmit }: Props) {
           {/* 위치 (Natal Chart용) */}
           <fieldset className="mt-4">
             <div className="flex items-center justify-between mb-2">
-              <legend className="text-sm font-medium text-gray-500">출생 위치 (Natal Chart)</legend>
+              <legend className="text-sm font-medium text-gray-500 dark:text-gray-400">출생 위치 (Natal Chart)</legend>
               <label className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
@@ -223,30 +223,30 @@ export default function BirthForm({ onSubmit }: Props) {
                   }}
                   className="sr-only peer"
                 />
-                <div className="w-8 h-[18px] bg-gray-200 rounded-full peer-checked:bg-gray-800 relative transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:w-3 after:h-3 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-3.5" />
-                <span className="text-sm text-gray-500">직접 입력</span>
+                <div className="w-8 h-[18px] bg-gray-200 dark:bg-gray-700 rounded-full peer-checked:bg-gray-800 dark:peer-checked:bg-gray-200 relative transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:w-3 after:h-3 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-3.5" />
+                <span className="text-sm text-gray-500 dark:text-gray-400">직접 입력</span>
               </label>
             </div>
             {manualCoords ? (
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">위도</label>
+                  <label className="block text-sm text-gray-400 dark:text-gray-500 mb-1">위도</label>
                   <input
                     type="number"
                     step="0.0001"
                     value={latitude}
                     onChange={e => setLatitude(Number(e.target.value))}
-                    className="w-full h-10 px-3 border border-gray-200 rounded-lg text-base text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-400 transition-all"
+                    className="w-full h-10 px-3 border border-gray-200 dark:border-gray-700 rounded-lg text-base text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-800/20 dark:focus:ring-gray-200/20 focus:border-gray-400 dark:focus:border-gray-500 transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">경도</label>
+                  <label className="block text-sm text-gray-400 dark:text-gray-500 mb-1">경도</label>
                   <input
                     type="number"
                     step="0.0001"
                     value={longitude}
                     onChange={e => setLongitude(Number(e.target.value))}
-                    className="w-full h-10 px-3 border border-gray-200 rounded-lg text-base text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-400 transition-all"
+                    className="w-full h-10 px-3 border border-gray-200 dark:border-gray-700 rounded-lg text-base text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-800/20 dark:focus:ring-gray-200/20 focus:border-gray-400 dark:focus:border-gray-500 transition-all"
                   />
                 </div>
               </div>
@@ -261,7 +261,7 @@ export default function BirthForm({ onSubmit }: Props) {
               <button
                 type="button"
                 onClick={() => setShowAdvanced(v => !v)}
-                className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                className="flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
                 <svg
                   className={`w-3 h-3 transition-transform ${showAdvanced ? 'rotate-90' : ''}`}
@@ -276,8 +276,8 @@ export default function BirthForm({ onSubmit }: Props) {
               </button>
               {showAdvanced && (
                 <fieldset className="mt-2">
-                  <legend className="text-sm font-medium text-gray-500 mb-2">자시법 (子時法)</legend>
-                  <div className="inline-flex h-10 rounded-lg bg-gray-100 p-1">
+                  <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">자시법 (子時法)</legend>
+                  <div className="inline-flex h-10 rounded-lg bg-gray-100 dark:bg-gray-800 p-1">
                     {([
                       { value: 'unified' as const, label: '통자시' },
                       { value: 'split' as const, label: '야자시' },
@@ -288,15 +288,15 @@ export default function BirthForm({ onSubmit }: Props) {
                         onClick={() => setJasiMethod(opt.value)}
                         className={`px-4 text-base rounded-md transition-all ${
                           jasiMethod === opt.value
-                            ? 'bg-white text-gray-800 shadow-sm font-medium'
-                            : 'text-gray-500 hover:text-gray-700'
+                            ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm font-medium'
+                            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                         }`}
                       >
                         {opt.label}
                       </button>
                     ))}
                   </div>
-                  <p className="mt-1.5 text-sm text-gray-400 leading-relaxed">
+                  <p className="mt-1.5 text-sm text-gray-400 dark:text-gray-500 leading-relaxed">
                     {jasiMethod === 'unified'
                       ? '23:30부터 子시, 일주를 다음날로 넘깁니다.'
                       : '23:30~00:00(야자시)은 子시이나, 일주는 당일 유지합니다.'}
@@ -309,12 +309,12 @@ export default function BirthForm({ onSubmit }: Props) {
           {/* 계산 버튼 */}
           <button
             type="submit"
-            className="mt-5 w-full h-11 bg-gray-800 text-white text-base font-medium rounded-lg hover:bg-gray-700 active:scale-[0.98] transition-all"
+            className="mt-5 w-full h-11 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 text-base font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-300 active:scale-[0.98] transition-all"
           >
             계산
           </button>
 
-          <p className="mt-3 text-center text-sm text-gray-400 leading-relaxed">
+          <p className="mt-3 text-center text-sm text-gray-400 dark:text-gray-500 leading-relaxed">
             🔒 모든 계산은 브라우저에서 처리되며,<br />
             입력하신 정보는 어떤 서버에도 전송되지 않습니다.
           </p>

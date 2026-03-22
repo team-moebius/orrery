@@ -16,12 +16,12 @@ export default function JwabeopChart({ jwabeop, pillars, unknownTime }: Props) {
 
   return (
     <section>
-      <h3 className="text-base font-medium text-gray-700 mb-2">坐法</h3>
-      <p className="text-sm text-gray-400 mb-2">각 주 지장간이 일지에서 어떤 운성에 좌(坐)하는지</p>
+      <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-2">坐法</h3>
+      <p className="text-sm text-gray-400 dark:text-gray-500 mb-2">각 주 지장간이 일지에서 어떤 운성에 좌(坐)하는지</p>
       <div className="overflow-x-auto">
         <table className="w-full text-center text-base font-hanja">
           <thead>
-            <tr className="text-sm text-gray-500">
+            <tr className="text-sm text-gray-500 dark:text-gray-400">
               {LABELS.map((label, i) => (
                 <th key={label} className="py-1 px-2 font-normal">
                   {i === 0 && unknownTime ? '' : `${label} ${pillars[i].pillar.branch}`}
@@ -34,15 +34,15 @@ export default function JwabeopChart({ jwabeop, pillars, unknownTime }: Props) {
               <tr key={row}>
                 {jwabeop.map((entries, col) => {
                   if (col === 0 && unknownTime) {
-                    return <td key={col} className="py-0.5 px-2 text-gray-300">?</td>
+                    return <td key={col} className="py-0.5 px-2 text-gray-300 dark:text-gray-600">?</td>
                   }
                   const entry = entries[row]
                   if (!entry) return <td key={col} className="py-0.5 px-2" />
                   return (
                     <td key={col} className="py-0.5 px-2">
                       <span className={`${stemColorClass(entry.stem)}`}>{entry.stem}</span>
-                      <span className="text-gray-500 text-sm ml-1">{entry.sipsin}</span>
-                      <span className="text-gray-400 text-sm ml-1">{entry.unseong}坐</span>
+                      <span className="text-gray-500 dark:text-gray-400 text-sm ml-1">{entry.sipsin}</span>
+                      <span className="text-gray-400 dark:text-gray-500 text-sm ml-1">{entry.unseong}坐</span>
                     </td>
                   )
                 })}

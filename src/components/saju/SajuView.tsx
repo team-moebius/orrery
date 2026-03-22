@@ -24,37 +24,37 @@ export default function SajuView({ input }: Props) {
   return (
     <div className="space-y-6">
       {/* 명식 테이블 */}
-      <section className="bg-white rounded-lg border border-gray-200 p-4">
+      <section className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-medium text-gray-700">四柱八字</h2>
+          <h2 className="text-base font-medium text-gray-700 dark:text-gray-200">四柱八字</h2>
           <CopyButton getText={() => sajuToText(result)} label="AI 해석용 복사" />
         </div>
         <PillarTable pillars={result.pillars} unknownTime={input.unknownTime} />
       </section>
 
       {/* 팔자 관계 */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <RelationList relations={result.relations} pillars={ganzis} />
       </div>
 
       {/* 신살 */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <SinsalList sals={result.specialSals} />
       </div>
 
       {/* 좌법 · 인종법 */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 space-y-4">
         <JwabeopChart jwabeop={result.jwabeop} pillars={result.pillars} unknownTime={input.unknownTime} />
         <InjongbeopChart injongbeop={result.injongbeop} pillars={result.pillars} />
       </div>
 
       {/* 대운 */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <DaewoonTable daewoon={result.daewoon} unknownTime={input.unknownTime} />
       </div>
 
       {/* 트랜짓 */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <TransitView natalPillars={natalPillars} />
       </div>
     </div>

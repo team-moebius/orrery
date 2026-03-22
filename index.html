@@ -57,6 +57,16 @@
     }
     </script>
 
+    <script>
+      (function() {
+        var s = localStorage.getItem('orrery-theme');
+        var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (s === 'dark' || (s !== 'light' && d)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />

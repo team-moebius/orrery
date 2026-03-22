@@ -21,11 +21,11 @@ export default function TransitView({ natalPillars }: Props) {
   return (
     <section>
       <div className="flex items-center gap-3 mb-2">
-        <h3 className="text-base font-medium text-gray-700">運勢</h3>
+        <h3 className="text-base font-medium text-gray-700 dark:text-gray-200">運勢</h3>
         <select
           value={months}
           onChange={e => setMonths(Number(e.target.value))}
-          className="text-sm border border-gray-300 rounded px-1.5 py-0.5 text-gray-600"
+          className="text-sm border border-gray-300 dark:border-gray-600 rounded px-1.5 py-0.5 text-gray-600 dark:text-gray-300"
         >
           <option value={1}>1개월</option>
           <option value={3}>3개월</option>
@@ -35,8 +35,8 @@ export default function TransitView({ natalPillars }: Props) {
           onClick={() => setBackward(!backward)}
           className={`text-sm px-2 py-0.5 rounded border transition-colors ${
             backward
-              ? 'bg-gray-100 border-gray-400 text-gray-700'
-              : 'border-gray-300 text-gray-500'
+              ? 'bg-gray-100 dark:bg-gray-800 border-gray-400 dark:border-gray-500 text-gray-700 dark:text-gray-200'
+              : 'border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400'
           }`}
         >
           {backward ? '과거' : '미래'}
@@ -44,7 +44,7 @@ export default function TransitView({ natalPillars }: Props) {
       </div>
 
       {transits.length === 0 ? (
-        <p className="text-base text-gray-400">({direction} {months}개월간 특별한 관계 없음)</p>
+        <p className="text-base text-gray-400 dark:text-gray-500">({direction} {months}개월간 특별한 관계 없음)</p>
       ) : (
         <div className="text-sm space-y-0.5 max-h-80 overflow-y-auto">
           {transits.map((tr, i) => {
@@ -53,13 +53,13 @@ export default function TransitView({ natalPillars }: Props) {
             const relStrs = tr.relations.map(r => `${r.prefix}${formatRelation(r.relation)}`)
 
             return (
-              <div key={i} className="flex items-baseline gap-2 text-gray-600">
-                <span className="text-gray-400 w-16 shrink-0">{dateStr}</span>
-                <span className={`w-8 shrink-0 ${tr.type === '月運' ? 'text-blue-600' : ''}`}>
+              <div key={i} className="flex items-baseline gap-2 text-gray-600 dark:text-gray-300">
+                <span className="text-gray-400 dark:text-gray-500 w-16 shrink-0">{dateStr}</span>
+                <span className={`w-8 shrink-0 ${tr.type === '月運' ? 'text-blue-600 dark:text-blue-400' : ''}`}>
                   {tr.type}
                 </span>
                 <span className="font-hanja shrink-0 whitespace-nowrap">{tr.transit}</span>
-                <span className="text-gray-400">↔</span>
+                <span className="text-gray-400 dark:text-gray-500">↔</span>
                 <span className="w-8 shrink-0">{tr.natalName}</span>
                 <span>{relStrs.join(', ')}</span>
               </div>

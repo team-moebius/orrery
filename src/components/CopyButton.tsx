@@ -30,7 +30,7 @@ export default function CopyButton({ getText, label = '복사' }: Props) {
   return (
     <button
       onClick={handleClick}
-      className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 transition-colors text-gray-600 whitespace-nowrap"
+      className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-300 whitespace-nowrap"
     >
       {copied ? '복사됨 ✓' : label}
     </button>

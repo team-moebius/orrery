@@ -58,10 +58,9 @@ export default function ZodiacRing({ ascLon }: Props) {
         key={`seg-${i}`}
         d={`${outerArc} ${lineToInner} ${innerArc} ${closePath}`}
         fill={color}
-        fillOpacity={0.12}
         stroke={color}
         strokeWidth={0.5}
-        strokeOpacity={0.3}
+        style={{ fillOpacity: 'var(--wheel-segment-opacity)', strokeOpacity: 'var(--wheel-segment-stroke-opacity)' }}
       />,
     )
 
@@ -73,7 +72,7 @@ export default function ZodiacRing({ ascLon }: Props) {
         key={`border-${i}`}
         x1={bStart.x} y1={bStart.y}
         x2={bEnd.x} y2={bEnd.y}
-        stroke="#9ca3af"
+        stroke="var(--wheel-grid)"
         strokeWidth={0.5}
       />,
     )
@@ -92,7 +91,7 @@ export default function ZodiacRing({ ascLon }: Props) {
         textAnchor="middle"
         dominantBaseline="central"
         fontSize={14}
-        fill="#374151"
+        fill="var(--wheel-axis)"
         style={{ userSelect: 'none' }}
       >
         {ZODIAC_SYMBOLS[sign]}
@@ -110,7 +109,7 @@ export default function ZodiacRing({ ascLon }: Props) {
           key={`tick-${i}-${d}`}
           x1={t1.x} y1={t1.y}
           x2={t2.x} y2={t2.y}
-          stroke="#9ca3af"
+          stroke="var(--wheel-grid)"
           strokeWidth={0.5}
         />,
       )
@@ -121,8 +120,8 @@ export default function ZodiacRing({ ascLon }: Props) {
   return (
     <g>
       {segments}
-      <circle cx={CX} cy={CY} r={R_OUTER} fill="none" stroke="#6b7280" strokeWidth={1} />
-      <circle cx={CX} cy={CY} r={R_ZODIAC_INNER} fill="none" stroke="#6b7280" strokeWidth={0.5} />
+      <circle cx={CX} cy={CY} r={R_OUTER} fill="none" stroke="var(--wheel-outline)" strokeWidth={1} />
+      <circle cx={CX} cy={CY} r={R_ZODIAC_INNER} fill="none" stroke="var(--wheel-outline)" strokeWidth={0.5} />
       {ticks}
       {symbols}
     </g>

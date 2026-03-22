@@ -28,7 +28,7 @@ export default function HouseWheel({ houses, angles }: Props) {
     const isAxis = house.number === 1 || house.number === 7 ||
                    house.number === 10 || house.number === 4
     const strokeWidth = isAxis ? 1.5 : 0.5
-    const strokeColor = isAxis ? '#374151' : '#9ca3af'
+    const strokeColor = isAxis ? 'var(--wheel-axis)' : 'var(--wheel-grid)'
 
     lines.push(
       <line
@@ -59,7 +59,7 @@ export default function HouseWheel({ houses, angles }: Props) {
         textAnchor="middle"
         dominantBaseline="central"
         fontSize={10}
-        fill="#9ca3af"
+        fill="var(--wheel-grid)"
         style={{ userSelect: 'none' }}
       >
         {ROMAN[house.number - 1]}
@@ -85,7 +85,7 @@ export default function HouseWheel({ houses, angles }: Props) {
         dominantBaseline="central"
         fontSize={9}
         fontWeight={600}
-        fill="#374151"
+        fill="var(--wheel-axis)"
         style={{ userSelect: 'none' }}
       >
         {label}
@@ -96,7 +96,7 @@ export default function HouseWheel({ houses, angles }: Props) {
   return (
     <g>
       {lines}
-      <circle cx={CX} cy={CY} r={R_INNER} fill="none" stroke="#d1d5db" strokeWidth={0.5} />
+      <circle cx={CX} cy={CY} r={R_INNER} fill="none" stroke="var(--wheel-inner)" strokeWidth={0.5} />
       {labels}
       {axisLabelNodes}
     </g>

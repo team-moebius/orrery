@@ -44,7 +44,7 @@ export default function PlanetMarkers({ planets, ascLon }: Props) {
             <line
               x1={tickOuter.x} y1={tickOuter.y}
               x2={tickInner.x} y2={tickInner.y}
-              stroke="#6b7280"
+              stroke="var(--wheel-outline)"
               strokeWidth={1}
             />
 
@@ -53,7 +53,7 @@ export default function PlanetMarkers({ planets, ascLon }: Props) {
               <line
                 x1={pointerStart.x} y1={pointerStart.y}
                 x2={pointerEnd.x} y2={pointerEnd.y}
-                stroke="#9ca3af"
+                stroke="var(--wheel-grid)"
                 strokeWidth={0.5}
                 strokeDasharray="2,2"
               />
@@ -66,7 +66,7 @@ export default function PlanetMarkers({ planets, ascLon }: Props) {
               textAnchor="middle"
               dominantBaseline="central"
               fontSize={13}
-              fill="#1f2937"
+              fill="var(--wheel-planet)"
               style={{ userSelect: 'none' }}
             >
               {symbol}
