@@ -256,7 +256,7 @@ export type ZodiacSign =
 export type PlanetId =
   | 'Sun' | 'Moon' | 'Mercury' | 'Venus' | 'Mars'
   | 'Jupiter' | 'Saturn' | 'Uranus' | 'Neptune' | 'Pluto'
-  | 'Chiron' | 'NorthNode' | 'SouthNode';
+  | 'Chiron' | 'NorthNode' | 'SouthNode' | 'Fortuna';
 
 /** 행성 위치 */
 export interface PlanetPosition {

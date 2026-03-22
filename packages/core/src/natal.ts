@@ -41,14 +41,14 @@ export const PLANET_SYMBOLS: Record<PlanetId, string> = {
   Sun: '☉', Moon: '☽', Mercury: '☿', Venus: '♀',
   Mars: '♂', Jupiter: '♃', Saturn: '♄', Uranus: '♅',
   Neptune: '♆', Pluto: '♇', Chiron: '⚷',
-  NorthNode: '☊', SouthNode: '☋',
+  NorthNode: '☊', SouthNode: '☋', Fortuna: '⊕',
 }
 
 export const PLANET_KO: Record<PlanetId, string> = {
   Sun: '태양', Moon: '달', Mercury: '수성', Venus: '금성',
   Mars: '화성', Jupiter: '목성', Saturn: '토성', Uranus: '천왕성',
   Neptune: '해왕성', Pluto: '명왕성', Chiron: '키론',
-  NorthNode: '북교점', SouthNode: '남교점',
+  NorthNode: '북교점', SouthNode: '남교점', Fortuna: '행운점',
 }
 
 /** PlanetId → swisseph body number 매핑 (SouthNode 제외 — 수동 계산) */
@@ -270,6 +270,28 @@ export async function calculateNatal(input: BirthInput, houseSystem = 'P'): Prom
     ...(cusps ? { house: findHouse(southLon, cusps) } : {}),
   })
 
+  // Fortuna (Part of Fortune) — ASC 필요하므로 시간을 알 때만 계산
+  if (ascmc) {
+    const ascLon = ascmc[0]
+    const sun = planets.find(p => p.id === 'Sun')!
+    const moon = planets.find(p => p.id === 'Moon')!
+    // 주간/야간 판정: 태양이 지평선 위(하우스 7~12)면 주간
+    const isDayChart = sun.house! >= 7
+    const fortunaLon = isDayChart
+      ? normalizeDeg(ascLon + moon.longitude - sun.longitude)
+      : normalizeDeg(ascLon + sun.longitude - moon.longitude)
+    planets.push({
+      id: 'Fortuna',
+      longitude: fortunaLon,
+      latitude: 0,
+      speed: 0,
+      sign: lonToSign(fortunaLon),
+      degreeInSign: degreeInSign(fortunaLon),
+      isRetrograde: false,
+      house: findHouse(fortunaLon, cusps!),
+    })
+  }
+
   // 하우스 배열 구축
   const houses: NatalHouse[] = []
   if (cusps) {
@@ -299,8 +321,8 @@ export async function calculateNatal(input: BirthInput, houseSystem = 'P'): Prom
     }
   }
 
-  // 애스펙트 (SouthNode 제외 — 관례상 NorthNode만 사용)
-  const aspectPlanets = planets.filter(p => p.id !== 'SouthNode')
+  // 애스펙트 (SouthNode, Fortuna 제외 — 파생 포인트)
+  const aspectPlanets = planets.filter(p => p.id !== 'SouthNode' && p.id !== 'Fortuna')
   const aspects = calculateAspects(aspectPlanets)
 
   return { input, planets, houses, angles, aspects }

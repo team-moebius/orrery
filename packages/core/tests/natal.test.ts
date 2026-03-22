@@ -76,9 +76,24 @@ describe('calculateNatal', () => {
     }
   })
 
-  it('12 houses and 13 planets', async () => {
+  it('12 houses and 14 planets', async () => {
     const chart = await calculateNatal(makeInput(NATAL_FIXTURES[0]))
     expect(chart.houses).toHaveLength(12)
-    expect(chart.planets).toHaveLength(13) // 10 planets + Chiron + NorthNode + SouthNode
+    expect(chart.planets).toHaveLength(14) // 10 planets + Chiron + NorthNode + SouthNode + Fortuna
+  })
+
+  it('Fortuna = ASC + Moon - Sun (day) or ASC + Sun - Moon (night)', async () => {
+    const chart = await calculateNatal(makeInput(NATAL_FIXTURES[0]))
+    const fortuna = chart.planets.find(p => p.id === 'Fortuna')!
+    const sun = chart.planets.find(p => p.id === 'Sun')!
+    const moon = chart.planets.find(p => p.id === 'Moon')!
+    const ascLon = chart.angles!.asc.longitude
+    const isDayChart = sun.house! >= 7
+    const expected = isDayChart
+      ? normalizeDeg(ascLon + moon.longitude - sun.longitude)
+      : normalizeDeg(ascLon + sun.longitude - moon.longitude)
+    expect(fortuna.longitude).toBeCloseTo(expected, 4)
+    expect(fortuna.house).toBeGreaterThanOrEqual(1)
+    expect(fortuna.house).toBeLessThanOrEqual(12)
   })
 })
