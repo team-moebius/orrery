@@ -7,7 +7,7 @@ import { getFourPillars, toHangul } from '@orrery/core/pillars'
 interface Props {
   open: boolean
   onClose: () => void
-  getCurrentFormState: () => SavedFormState
+  getCurrentFormState: () => SavedFormState | null
   onSelect: (data: SavedFormState) => void
 }
 
@@ -72,8 +72,10 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
   function handleSaveNew() {
     const trimmed = newName.trim()
     if (!trimmed) return
+    const state = getCurrentFormState()
+    if (!state) return
     try {
-      addProfile(trimmed, getCurrentFormState())
+      addProfile(trimmed, state)
       setSavingNew(false)
       setNewName('')
       setError(null)
@@ -216,7 +218,7 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
         >
           <span>+ 입력한 정보로 새 프로필 추가</span>
           <span className="block text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-            {formatSummary(getCurrentFormState())}
+            {open && getCurrentFormState() && formatSummary(getCurrentFormState()!)}
           </span>
         </button>
       )}

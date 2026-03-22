@@ -32,7 +32,7 @@ export default function App() {
   }
 
   const getCurrentFormState = useCallback(() => {
-    return birthFormRef.current!.getCurrentState()
+    return birthFormRef.current?.getCurrentState() ?? null
   }, [])
 
   return (
