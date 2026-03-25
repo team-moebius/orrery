@@ -1,4 +1,4 @@
-**한국어** | [English](./README.en.md) | [中文](./README.zh.md) | [日本語](./README.ja.md)
+**한국어** | [English](https://github.com/rath/orrery/blob/main/packages/core/README.en.md) | [中文](https://github.com/rath/orrery/blob/main/packages/core/README.zh.md) | [日本語](https://github.com/rath/orrery/blob/main/packages/core/README.ja.md)
 
 # @orrery/core
 
