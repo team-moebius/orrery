@@ -1,3 +1,5 @@
+**한국어** | [English](./README.en.md) | [中文](./README.zh.md) | [日本語](./README.ja.md)
+
 <div align="center">
   <img src="src/assets/icon-512.png" alt="Orrery" width="256" />
   <h1>Orrery — 혼천의(渾天儀)</h1>

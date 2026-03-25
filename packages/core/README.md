@@ -1,3 +1,5 @@
+**한국어** | [English](./README.en.md) | [中文](./README.zh.md) | [日本語](./README.ja.md)
+
 # @orrery/core
 
 브라우저/Node.js 환경에서 동작하는 동양·서양 점술 계산 엔진입니다.
