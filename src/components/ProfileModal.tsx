@@ -3,6 +3,7 @@ import type { SavedFormState } from './BirthForm.tsx'
 import { loadProfiles, addProfile, updateProfile, deleteProfile, exportProfiles, importProfiles } from '../utils/profiles.ts'
 import type { Profile } from '../utils/profiles.ts'
 import { getFourPillars, toHangul } from '@orrery/core/pillars'
+import { useLocale } from '../i18n/index.ts'
 
 interface Props {
   open: boolean
@@ -11,19 +12,20 @@ interface Props {
   onSelect: (data: SavedFormState) => void
 }
 
-function formatSummary(data: SavedFormState): string {
+function formatSummary(data: SavedFormState, t: (key: string) => string): string {
   const date = `${data.year}-${String(data.month).padStart(2, '0')}-${String(data.day).padStart(2, '0')}`
   const time = data.unknownTime
-    ? '시간모름'
+    ? t('profile.timeUnknown')
     : `${String(data.hour).padStart(2, '0')}:${String(data.minute).padStart(2, '0')}`
-  const gender = data.gender === 'M' ? '남' : '여'
-  const city = data.city?.name ?? '직접입력'
+  const gender = data.gender === 'M' ? t('profile.male') : t('profile.female')
+  const city = data.city?.name ?? t('profile.manualInput')
   const [, , dp] = getFourPillars(data.year, data.month, data.day, data.hour, data.minute)
-  const ilju = toHangul(dp[0]) + toHangul(dp[1]) + '일주'
+  const ilju = toHangul(dp[0]) + toHangul(dp[1]) + t('profile.ilju')
   return `${date} ${time} ${gender} ${city} ${ilju}`
 }
 
 export default function ProfileModal({ open, onClose, getCurrentFormState, onSelect }: Props) {
+  const { t } = useLocale()
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [savingNew, setSavingNew] = useState(false)
   const [newName, setNewName] = useState('')
@@ -81,7 +83,7 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
       setError(null)
       refresh()
     } catch {
-      setError('저장 공간이 부족합니다. 불필요한 프로필을 삭제해주세요.')
+      setError(t('profile.storageError'))
     }
   }
 
@@ -134,7 +136,7 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
           refresh()
         }
       } catch {
-        setError('파일을 읽을 수 없습니다. 올바른 JSON 파일인지 확인해주세요.')
+        setError(t('profile.importError'))
       }
     }
     reader.readAsText(file)
@@ -166,12 +168,12 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
     >
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-medium text-gray-800 dark:text-gray-100">프로필 관리</h2>
+        <h2 className="text-lg font-medium text-gray-800 dark:text-gray-100">{t('profile.title')}</h2>
         <button
           type="button"
           onClick={onClose}
           className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-          aria-label="닫기"
+          aria-label={t('profile.close')}
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -181,11 +183,11 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
 
       {/* 설명 + 내보내기/가져오기 */}
       <p className="text-xs text-gray-400 dark:text-gray-500 leading-relaxed mb-4">
-        프로필은 브라우저 저장소(LocalStorage)에 보관되며, 브라우저 데이터 삭제 시 함께 사라집니다.{' '}
-        <button type="button" onClick={handleExport} disabled={profiles.length === 0} className="underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-40 disabled:no-underline transition-colors">내보내기</button>
+        {t('profile.desc')}
+        <button type="button" onClick={handleExport} disabled={profiles.length === 0} className="underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-40 disabled:no-underline transition-colors">{t('profile.export')}</button>
         /
-        <button type="button" onClick={() => fileInputRef.current?.click()} className="underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">가져오기</button>
-        로 백업할 수 있습니다.
+        <button type="button" onClick={() => fileInputRef.current?.click()} className="underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">{t('profile.import')}</button>
+        {t('profile.backupSuffix')}
       </p>
       <input ref={fileInputRef} type="file" accept=".json" onChange={handleImport} className="hidden" />
 
@@ -200,14 +202,14 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
             type="text"
             value={newName}
             onChange={e => setNewName(e.target.value)}
-            placeholder="별칭 입력"
+            placeholder={t('profile.namePlaceholder')}
             className={inputClass + ' flex-1'}
           />
           <button type="submit" disabled={!newName.trim()} className={btnPrimary + ' disabled:opacity-40'}>
-            저장
+            {t('profile.save')}
           </button>
           <button type="button" onClick={() => setSavingNew(false)} className={btnSecondary}>
-            취소
+            {t('profile.cancel')}
           </button>
         </form>
       ) : (
@@ -216,9 +218,9 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
           onClick={() => setSavingNew(true)}
           className="w-full mb-4 py-2.5 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
         >
-          <span>+ 입력한 정보로 새 프로필 추가</span>
+          <span>{t('profile.addNew')}</span>
           <span className="block text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-            {open && getCurrentFormState() && formatSummary(getCurrentFormState()!)}
+            {open && getCurrentFormState() && formatSummary(getCurrentFormState()!, t)}
           </span>
         </button>
       )}
@@ -233,7 +235,7 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
       <div className="max-h-[60vh] overflow-y-auto">
         {profiles.length === 0 ? (
           <p className="text-center text-sm text-gray-400 dark:text-gray-500 py-6">
-            저장된 프로필이 없습니다.
+            {t('profile.empty')}
           </p>
         ) : (
           <div className="space-y-0 divide-y divide-gray-100 dark:divide-gray-800">
@@ -270,7 +272,7 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
                         type="button"
                         onClick={() => { setEditingId(profile.id); setEditName(profile.name) }}
                         className="p-1 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400 transition-colors"
-                        title="별칭 수정"
+                        title={t('profile.editName')}
                       >
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z" />
@@ -283,7 +285,7 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
                           ? 'px-1.5 py-0.5 text-xs rounded border border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 transition-colors'
                           : 'p-1 text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition-colors'}
                       >
-                        {confirmDeleteId === profile.id ? '확인?' : (
+                        {confirmDeleteId === profile.id ? t('profile.confirmDelete') : (
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                           </svg>
@@ -295,7 +297,7 @@ export default function ProfileModal({ open, onClose, getCurrentFormState, onSel
 
                 {/* 요약 */}
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                  {formatSummary(profile.data)}
+                  {formatSummary(profile.data, t)}
                 </p>
               </div>
             ))}

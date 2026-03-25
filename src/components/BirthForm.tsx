@@ -4,6 +4,7 @@ import { isKoreanDaylightTime } from '@orrery/core/natal'
 import type { City } from '@orrery/core/cities'
 import { SEOUL } from '@orrery/core/cities'
 import CityCombobox from './CityCombobox.tsx'
+import { useLocale } from '../i18n/index.ts'
 import logo from '../assets/icon-512.png'
 
 export interface BirthFormHandle {
@@ -56,6 +57,7 @@ const selectClass =
 
 
 const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubmit, externalState, onExternalStateConsumed }, ref) {
+  const { t } = useLocale()
   const [year, setYear] = useState(saved?.year ?? currentYear - 20)
   const [month, setMonth] = useState(saved?.month ?? now.getMonth() + 1)
   const [day, setDay] = useState(saved?.day ?? now.getDate())
@@ -150,7 +152,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
         <div className="w-full min-w-0">
           {/* 생년월일 */}
           <fieldset>
-            <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">생년월일 (양력)</legend>
+            <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t('form.birthDate')}</legend>
             <div className="grid grid-cols-3 gap-2">
               <select
                 value={year}
@@ -159,7 +161,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
               >
                 {Array.from({ length: currentYear - 1900 + 1 }, (_, i) => {
                   const y = currentYear - i
-                  return <option key={y} value={y}>{y}년</option>
+                  return <option key={y} value={y}>{`${y}${t('form.yearSuffix')}`}</option>
                 })}
               </select>
               <select
@@ -168,7 +170,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                 className={selectClass}
               >
                 {Array.from({ length: 12 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>{i + 1}월</option>
+                  <option key={i + 1} value={i + 1}>{`${i + 1}${t('form.monthSuffix')}`}</option>
                 ))}
               </select>
               <select
@@ -177,7 +179,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                 className={selectClass}
               >
                 {Array.from({ length: 31 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>{i + 1}일</option>
+                  <option key={i + 1} value={i + 1}>{`${i + 1}${t('form.daySuffix')}`}</option>
                 ))}
               </select>
             </div>
@@ -185,14 +187,14 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
 
           {isKDT && (
             <div className="mt-2 px-3 py-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg text-sm text-amber-700 dark:text-amber-400 leading-relaxed">
-              88올림픽 하계표준시(KDT, UTC+10) 적용 기간입니다. 모든 계산에 자동 반영됩니다.
+              {t('form.kdt')}
             </div>
           )}
 
           {/* 시간 + 성별 */}
           <fieldset className="mt-4">
             <div className="flex items-center justify-between mb-2">
-              <legend className="text-sm font-medium text-gray-500 dark:text-gray-400">시간</legend>
+              <legend className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('form.time')}</legend>
               <label className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
@@ -201,7 +203,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                   className="sr-only peer"
                 />
                 <div className="w-8 h-[18px] bg-gray-200 dark:bg-gray-700 rounded-full peer-checked:bg-gray-800 dark:peer-checked:bg-gray-200 relative transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:w-3 after:h-3 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-3.5" />
-                <span className="text-sm text-gray-500 dark:text-gray-400">모름</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{t('form.unknown')}</span>
               </label>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-[1fr_1fr_auto] gap-2 items-end">
@@ -212,7 +214,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                 className={selectClass}
               >
                 {Array.from({ length: 24 }, (_, i) => (
-                  <option key={i} value={i}>{String(i).padStart(2, '0')}시</option>
+                  <option key={i} value={i}>{`${String(i).padStart(2, '0')}${t('form.hourSuffix')}`}</option>
                 ))}
               </select>
               <select
@@ -222,7 +224,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                 className={selectClass}
               >
                 {Array.from({ length: 60 }, (_, i) => (
-                  <option key={i} value={i}>{String(i).padStart(2, '0')}분</option>
+                  <option key={i} value={i}>{`${String(i).padStart(2, '0')}${t('form.minuteSuffix')}`}</option>
                 ))}
               </select>
 
@@ -240,7 +242,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                           : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                       }`}
                     >
-                      {g === 'M' ? '남' : '여'}
+                      {g === 'M' ? t('form.male') : t('form.female')}
                     </button>
                   ))}
                 </div>
@@ -251,7 +253,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
           {/* 위치 (Natal Chart용) */}
           <fieldset className="mt-4">
             <div className="flex items-center justify-between mb-2">
-              <legend className="text-sm font-medium text-gray-500 dark:text-gray-400">출생 위치 (Natal Chart)</legend>
+              <legend className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('form.birthPlace')}</legend>
               <label className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
@@ -266,13 +268,13 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                   className="sr-only peer"
                 />
                 <div className="w-8 h-[18px] bg-gray-200 dark:bg-gray-700 rounded-full peer-checked:bg-gray-800 dark:peer-checked:bg-gray-200 relative transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:w-3 after:h-3 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-3.5" />
-                <span className="text-sm text-gray-500 dark:text-gray-400">직접 입력</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{t('form.manualInput')}</span>
               </label>
             </div>
             {manualCoords ? (
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-sm text-gray-400 dark:text-gray-500 mb-1">위도</label>
+                  <label className="block text-sm text-gray-400 dark:text-gray-500 mb-1">{t('form.latitude')}</label>
                   <input
                     type="number"
                     step="0.0001"
@@ -282,7 +284,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 dark:text-gray-500 mb-1">경도</label>
+                  <label className="block text-sm text-gray-400 dark:text-gray-500 mb-1">{t('form.longitude')}</label>
                   <input
                     type="number"
                     step="0.0001"
@@ -314,15 +316,15 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
-                고급 설정
+                {t('form.advanced')}
               </button>
               {showAdvanced && (
                 <fieldset className="mt-2">
-                  <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">자시법 (子時法)</legend>
+                  <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t('form.jasiMethod')}</legend>
                   <div className="inline-flex h-10 rounded-lg bg-gray-100 dark:bg-gray-800 p-1">
                     {([
-                      { value: 'unified' as const, label: '통자시' },
-                      { value: 'split' as const, label: '야자시' },
+                      { value: 'unified' as const, label: t('form.unified') },
+                      { value: 'split' as const, label: t('form.split') },
                     ]).map(opt => (
                       <button
                         key={opt.value}
@@ -340,8 +342,8 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                   </div>
                   <p className="mt-1.5 text-sm text-gray-400 dark:text-gray-500 leading-relaxed">
                     {jasiMethod === 'unified'
-                      ? '23:30부터 子시, 일주를 다음날로 넘깁니다.'
-                      : '23:30~00:00(야자시)은 子시이나, 일주는 당일 유지합니다.'}
+                      ? t('form.unifiedDesc')
+                      : t('form.splitDesc')}
                   </p>
                 </fieldset>
               )}
@@ -353,12 +355,12 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
             type="submit"
             className="mt-5 w-full h-11 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 text-base font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-300 active:scale-[0.98] transition-all"
           >
-            계산
+            {t('form.calculate')}
           </button>
 
           <p className="mt-3 text-center text-sm text-gray-400 dark:text-gray-500 leading-relaxed">
-            🔒 모든 계산은 브라우저에서 처리되며,<br />
-            입력하신 정보는 어떤 서버에도 전송되지 않습니다.
+            🔒 {t('form.privacy1')}<br />
+            {t('form.privacy2')}
           </p>
         </div>
       </div>

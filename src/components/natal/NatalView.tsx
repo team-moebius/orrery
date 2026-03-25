@@ -7,12 +7,14 @@ import NatalWheel from './wheel/NatalWheel.tsx'
 import CopyButton from '../CopyButton.tsx'
 import { natalToText } from '../../utils/text-export.ts'
 import type { BirthInput, NatalChart } from '@orrery/core/types'
+import { useLocale } from '../../i18n/index.ts'
 
 interface Props {
   input: BirthInput
 }
 
 export default function NatalView({ input }: Props) {
+  const { t } = useLocale()
   const [chart, setChart] = useState<NatalChart | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -51,7 +53,7 @@ export default function NatalView({ input }: Props) {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          Swiss Ephemeris 로딩 중...
+          {t('natal.loading')}
         </div>
       </div>
     )
@@ -60,7 +62,7 @@ export default function NatalView({ input }: Props) {
   if (error) {
     return (
       <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-4">
-        <p className="text-base text-red-800 dark:text-red-300 font-medium">계산 오류</p>
+        <p className="text-base text-red-800 dark:text-red-300 font-medium">{t('natal.error')}</p>
         <p className="text-base text-red-600 dark:text-red-400 mt-1">{error}</p>
       </div>
     )
@@ -76,10 +78,10 @@ export default function NatalView({ input }: Props) {
       {unknownTime && (
         <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
           <p className="text-base text-amber-800 dark:text-amber-300 font-medium">
-            출생 시간 없이 정오(12:00) 기준으로 계산한 결과입니다.
+            {t('natal.unknownTime')}
           </p>
           <p className="text-base text-amber-600 dark:text-amber-400 mt-1">
-            달은 최대 ±6° 오차가 있을 수 있으며, ASC · 하우스 배치는 표시하지 않습니다.
+            {t('natal.unknownTimeDetail')}
           </p>
         </div>
       )}
@@ -111,7 +113,7 @@ export default function NatalView({ input }: Props) {
               </label>
             )}
           </div>
-          <CopyButton getText={() => natalToText(chart, houseSystemName)} label="AI 해석용 복사" />
+          <CopyButton getText={() => natalToText(chart, houseSystemName)} label={t('copy.aiCopy')} />
         </div>
         <PlanetTable planets={chart.planets} angles={chart.angles} />
       </section>

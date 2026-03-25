@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import type { City } from '@orrery/core/cities'
 import { KOREAN_CITIES, filterCities, formatCityName } from '@orrery/core/cities'
+import { useLocale } from '../i18n/index.ts'
 
 interface Props {
   selectedCity: City | null
@@ -15,6 +16,7 @@ const inputClass =
 const DEFAULT_CITIES = KOREAN_CITIES.slice(0, 8) as City[]
 
 export default function CityCombobox({ selectedCity, onSelect }: Props) {
+  const { t } = useLocale()
   const [query, setQuery] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [highlightIndex, setHighlightIndex] = useState(-1)
@@ -109,7 +111,7 @@ export default function CityCombobox({ selectedCity, onSelect }: Props) {
     if (flatResults.length === 0) {
       return (
         <li className="px-3 py-2 text-base text-gray-400 dark:text-gray-500 text-center">
-          검색 결과 없음
+          {t('city.noResults')}
         </li>
       )
     }
@@ -120,7 +122,7 @@ export default function CityCombobox({ selectedCity, onSelect }: Props) {
     if (koreanResults.length > 0) {
       items.push(
         <li key="header-kr" className="px-3 pt-1.5 pb-1 text-sm font-medium text-gray-400 dark:text-gray-500" role="presentation">
-          한국
+          {t('city.korea')}
         </li>
       )
       for (const city of koreanResults) {
@@ -137,7 +139,7 @@ export default function CityCombobox({ selectedCity, onSelect }: Props) {
       }
       items.push(
         <li key="header-world" className="px-3 pt-1.5 pb-1 text-sm font-medium text-gray-400 dark:text-gray-500" role="presentation">
-          세계
+          {t('city.world')}
         </li>
       )
       for (const city of worldResults) {
@@ -181,7 +183,7 @@ export default function CityCombobox({ selectedCity, onSelect }: Props) {
         aria-activedescendant={highlightIndex >= 0 ? `city-option-${highlightIndex}` : undefined}
         autoComplete="off"
         className={inputClass}
-        placeholder="도시 이름을 입력하세요"
+        placeholder={t('city.placeholder')}
         value={displayValue}
         onFocus={handleFocus}
         onBlur={handleBlur}

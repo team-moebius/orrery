@@ -2,12 +2,14 @@ import { useState, useMemo } from 'react'
 import { findTransits } from '@orrery/core/pillars'
 import { formatRelation } from '../../utils/format.ts'
 import type { TransitItem } from '@orrery/core/types'
+import { useLocale } from '../../i18n/index.ts'
 
 interface Props {
   natalPillars: string[]  // [시주, 일주, 월주, 년주]
 }
 
 export default function TransitView({ natalPillars }: Props) {
+  const { t, locale } = useLocale()
   const [months, setMonths] = useState(1)
   const [backward, setBackward] = useState(false)
 
@@ -16,7 +18,7 @@ export default function TransitView({ natalPillars }: Props) {
     [natalPillars, months, backward],
   )
 
-  const direction = backward ? '과거' : '향후'
+  const direction = backward ? t('saju.transit.past') : t('saju.transit.future')
 
   return (
     <section>
@@ -27,9 +29,9 @@ export default function TransitView({ natalPillars }: Props) {
           onChange={e => setMonths(Number(e.target.value))}
           className="text-sm border border-gray-300 dark:border-gray-600 rounded px-1.5 py-0.5 text-gray-600 dark:text-gray-300"
         >
-          <option value={1}>1개월</option>
-          <option value={3}>3개월</option>
-          <option value={6}>6개월</option>
+          <option value={1}>{t('saju.transit.1month')}</option>
+          <option value={3}>{t('saju.transit.3months')}</option>
+          <option value={6}>{t('saju.transit.6months')}</option>
         </select>
         <button
           onClick={() => setBackward(!backward)}
@@ -39,18 +41,21 @@ export default function TransitView({ natalPillars }: Props) {
               : 'border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400'
           }`}
         >
-          {backward ? '과거' : '미래'}
+          {backward ? t('saju.transit.pastBtn') : t('saju.transit.futureBtn')}
         </button>
       </div>
 
       {transits.length === 0 ? (
-        <p className="text-base text-gray-400 dark:text-gray-500">({direction} {months}개월간 특별한 관계 없음)</p>
+        <p className="text-base text-gray-400 dark:text-gray-500">({direction} {months}{t('saju.transit.noRelation')})</p>
       ) : (
         <div className="text-sm space-y-0.5 max-h-80 overflow-y-auto">
           {transits.map((tr, i) => {
             const date = tr.date
-            const dateStr = `${String(date.getMonth() + 1).padStart(2, ' ')}월 ${String(date.getDate()).padStart(2, ' ')}일`
-            const relStrs = tr.relations.map(r => `${r.prefix}${formatRelation(r.relation)}`)
+            const mm = String(date.getMonth() + 1).padStart(2, ' ')
+            const dd = String(date.getDate()).padStart(2, ' ')
+            const dateStr = locale === 'en' ? `${mm}/${dd}` : `${mm}${t('form.monthSuffix')} ${dd}${t('form.daySuffix')}`
+            const prefixMap: Record<string, string> = { '천간': t('transit.stem'), '지지': t('transit.branch') }
+            const relStrs = tr.relations.map(r => `${prefixMap[r.prefix] ?? r.prefix}${formatRelation(r.relation)}`)
 
             return (
               <div key={i} className="flex items-baseline gap-2 text-gray-600 dark:text-gray-300">

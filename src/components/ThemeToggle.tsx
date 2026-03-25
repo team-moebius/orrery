@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useLocale } from '../i18n/index.ts'
 
 type ThemePreference = 'system' | 'light' | 'dark'
 
@@ -21,6 +22,7 @@ function applyTheme(pref: ThemePreference) {
 }
 
 export default function ThemeToggle() {
+  const { t } = useLocale()
   const [pref, setPref] = useState<ThemePreference>(getStored)
 
   const apply = useCallback(() => applyTheme(pref), [pref])
@@ -48,9 +50,9 @@ export default function ThemeToggle() {
   }
 
   const titles: Record<ThemePreference, string> = {
-    system: '시스템 설정 따름',
-    light: '라이트 모드',
-    dark: '다크 모드',
+    system: t('theme.system'),
+    light: t('theme.light'),
+    dark: t('theme.dark'),
   }
 
   return (

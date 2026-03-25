@@ -83,7 +83,22 @@ Python에서 TypeScript로 포팅 시 주의:
 
 ## Conventions
 
-- 한국어 UI, 한자 술어
 - 기본 폰트: Pretendard (한글/라틴), Noto Sans KR (한자 fallback)
 - `.font-hanja` 클래스: Noto Sans KR (한자 전용)
 - 오행 색상: 木=green, 火=red, 土=yellow, 金=gray, 水=blue
+
+## i18n (다국어)
+
+4개 언어 지원: 한국어(ko), 중국어(zh), 일본어(ja), 영어(en).
+
+- 번역 파일: `src/i18n/locales/{ko,zh,ja,en}.ts` — 플랫 딕셔너리 (`Record<string, string>`)
+- 스토어: `src/i18n/store.ts` — `useSyncExternalStore` 기반, localStorage 키 `orrery-locale`
+- Hook: `src/i18n/index.ts` — `useLocale()` → `{ locale, setLocale, t }`
+- 컴포넌트에서 사용: `const { t } = useLocale()` 후 `t('key.name')`
+
+**규칙:**
+- UI에 한국어 문자열을 하드코딩하지 말 것. 반드시 `t('key')` 사용
+- 한자 전문용어(四柱八字, 十神, 空亡, 大運, 天干, 地支 등)는 번역하지 않고 모든 언어에서 그대로 사용
+- '혼천의(渾天儀)' 앱 제목은 번역하지 않음 (고정값)
+- 새 문자열 추가 시 4개 언어 파일 모두에 키를 추가할 것
+- 브라우저 언어 자동 감지, 폴백은 영어(en)

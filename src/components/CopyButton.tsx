@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { useLocale } from '../i18n/index.ts'
 
 interface Props {
   getText: () => string | Promise<string>
   label?: React.ReactNode
 }
 
-export default function CopyButton({ getText, label = '복사' }: Props) {
+export default function CopyButton({ getText, label }: Props) {
+  const { t } = useLocale()
   const [copied, setCopied] = useState(false)
 
   async function handleClick() {
@@ -32,7 +34,7 @@ export default function CopyButton({ getText, label = '복사' }: Props) {
       onClick={handleClick}
       className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-300 whitespace-nowrap"
     >
-      {copied ? '복사됨 ✓' : label}
+      {copied ? t('copy.copied') : (label ?? t('copy.copy'))}
     </button>
   )
 }

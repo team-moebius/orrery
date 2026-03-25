@@ -1,5 +1,6 @@
 import type { JwaEntry, PillarDetail } from '@orrery/core/types'
 import { stemColorClass } from '../../utils/format.ts'
+import { useLocale } from '../../i18n/index.ts'
 
 interface Props {
   jwabeop: JwaEntry[][]   // [시, 일, 월, 년]
@@ -10,6 +11,7 @@ interface Props {
 const LABELS = ['時柱', '日柱', '月柱', '年柱']
 
 export default function JwabeopChart({ jwabeop, pillars, unknownTime }: Props) {
+  const { t } = useLocale()
   // 최대 지장간 수 (행 수)
   const maxRows = Math.max(...jwabeop.map(entries => entries.length))
   if (maxRows === 0) return null
@@ -17,7 +19,7 @@ export default function JwabeopChart({ jwabeop, pillars, unknownTime }: Props) {
   return (
     <section>
       <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-2">坐法</h3>
-      <p className="text-sm text-gray-400 dark:text-gray-500 mb-2">각 주 지장간이 일지에서 어떤 운성에 좌(坐)하는지</p>
+      <p className="text-sm text-gray-400 dark:text-gray-500 mb-2">{t('saju.jwabeop.desc')}</p>
       <div className="overflow-x-auto">
         <table className="w-full text-center text-base font-hanja">
           <thead>

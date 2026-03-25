@@ -1,11 +1,13 @@
 import type { NatalAspect } from '@orrery/core/types'
-import { PLANET_SYMBOLS, PLANET_KO, ASPECT_SYMBOLS } from '@orrery/core/natal'
+import { PLANET_SYMBOLS, ASPECT_SYMBOLS } from '@orrery/core/natal'
+import { useLocale } from '../../i18n/index.ts'
 
 interface Props {
   aspects: NatalAspect[]
 }
 
 export default function AspectGrid({ aspects }: Props) {
+  const { t } = useLocale()
   const top = aspects.slice(0, 15)
 
   return (
@@ -15,10 +17,10 @@ export default function AspectGrid({ aspects }: Props) {
         {top.map((a, i) => (
           <div key={i} className="flex items-center gap-2 text-base py-0.5">
             <span className="w-5 text-center">{PLANET_SYMBOLS[a.planet1]}</span>
-            <span className="text-gray-500 dark:text-gray-400 w-12">{PLANET_KO[a.planet1]}</span>
+            <span className="text-gray-500 dark:text-gray-400 w-12">{t(`planet.${a.planet1}`)}</span>
             <span className="w-4 text-center">{ASPECT_SYMBOLS[a.type]}</span>
             <span className="w-5 text-center">{PLANET_SYMBOLS[a.planet2]}</span>
-            <span className="text-gray-500 dark:text-gray-400 w-12">{PLANET_KO[a.planet2]}</span>
+            <span className="text-gray-500 dark:text-gray-400 w-12">{t(`planet.${a.planet2}`)}</span>
             <span className="ml-auto font-mono text-gray-400 dark:text-gray-500 text-sm">
               orb {a.orb.toFixed(1)}°
             </span>

@@ -1,5 +1,6 @@
 import type { PlanetPosition, NatalAngles } from '@orrery/core/types'
-import { PLANET_SYMBOLS, PLANET_KO, ZODIAC_SYMBOLS, ZODIAC_KO, ROMAN, formatDegree } from '@orrery/core/natal'
+import { PLANET_SYMBOLS, ZODIAC_SYMBOLS, ROMAN, formatDegree } from '@orrery/core/natal'
+import { useLocale } from '../../i18n/index.ts'
 
 interface Props {
   planets: PlanetPosition[]
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function PlanetTable({ planets, angles }: Props) {
+  const { t } = useLocale()
   const showHouse = planets.some(p => p.house != null)
 
   return (
@@ -16,11 +18,11 @@ export default function PlanetTable({ planets, angles }: Props) {
         <table className="w-full text-base">
           <thead>
             <tr className="text-sm text-gray-400 dark:text-gray-500 border-b border-gray-100 dark:border-gray-800">
-              <th className="text-left py-1 pr-2">행성</th>
-              <th className="text-left py-1 pr-2">별자리</th>
-              <th className="text-right py-1 pr-2">도수</th>
+              <th className="text-left py-1 pr-2">{t('natal.planet')}</th>
+              <th className="text-left py-1 pr-2">{t('natal.sign')}</th>
+              <th className="text-right py-1 pr-2">{t('natal.degree')}</th>
               <th className="text-center py-1 pr-2">Rx</th>
-              {showHouse && <th className="text-center py-1">하우스</th>}
+              {showHouse && <th className="text-center py-1">{t('natal.house')}</th>}
             </tr>
           </thead>
           <tbody>
@@ -28,12 +30,12 @@ export default function PlanetTable({ planets, angles }: Props) {
               <tr key={p.id} className="border-b border-gray-50 dark:border-gray-800">
                 <td className="py-1.5 pr-2">
                   <span className="mr-1">{PLANET_SYMBOLS[p.id]}</span>
-                  <span className="text-gray-600 dark:text-gray-300">{PLANET_KO[p.id]}</span>
+                  <span className="text-gray-600 dark:text-gray-300">{t(`planet.${p.id}`)}</span>
                 </td>
                 <td className="py-1.5 pr-2 whitespace-nowrap">
                   <span className="mr-1">{ZODIAC_SYMBOLS[p.sign]}</span>
-                  <span className="text-gray-600 dark:text-gray-300 sm:hidden">{ZODIAC_KO[p.sign].slice(0, -2)}</span>
-                  <span className="text-gray-600 dark:text-gray-300 hidden sm:inline">{ZODIAC_KO[p.sign]}</span>
+                  <span className="text-gray-600 dark:text-gray-300 sm:hidden">{t(`zodiac.short.${p.sign}`)}</span>
+                  <span className="text-gray-600 dark:text-gray-300 hidden sm:inline">{t(`zodiac.${p.sign}`)}</span>
                 </td>
                 <td className="py-1.5 pr-2 text-right font-mono text-gray-700 dark:text-gray-200">
                   {formatDegree(p.longitude)}
@@ -66,8 +68,8 @@ export default function PlanetTable({ planets, angles }: Props) {
               <div key={label} className="flex items-center gap-2 whitespace-nowrap">
                 <span className="font-medium text-gray-700 dark:text-gray-200 w-10">{label}</span>
                 <span>{ZODIAC_SYMBOLS[a.sign]}</span>
-                <span className="text-gray-600 dark:text-gray-300 sm:hidden">{ZODIAC_KO[a.sign].slice(0, -2)}</span>
-                <span className="text-gray-600 dark:text-gray-300 hidden sm:inline">{ZODIAC_KO[a.sign]}</span>
+                <span className="text-gray-600 dark:text-gray-300 sm:hidden">{t(`zodiac.short.${a.sign}`)}</span>
+                <span className="text-gray-600 dark:text-gray-300 hidden sm:inline">{t(`zodiac.${a.sign}`)}</span>
                 <span className="font-mono text-gray-700 dark:text-gray-200">{formatDegree(a.longitude)}</span>
               </div>
             ))}

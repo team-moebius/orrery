@@ -1,11 +1,13 @@
 import type { NatalHouse } from '@orrery/core/types'
-import { ZODIAC_SYMBOLS, ZODIAC_KO, ROMAN, formatDegree } from '@orrery/core/natal'
+import { ZODIAC_SYMBOLS, ROMAN, formatDegree } from '@orrery/core/natal'
+import { useLocale } from '../../i18n/index.ts'
 
 interface Props {
   houses: NatalHouse[]
 }
 
 export default function HouseTable({ houses }: Props) {
+  const { t } = useLocale()
   const left = houses.slice(0, 6)
   const right = houses.slice(6)
 
@@ -22,8 +24,8 @@ export default function HouseTable({ houses }: Props) {
                   </td>
                   <td className="py-1 pr-1">{ZODIAC_SYMBOLS[h.sign]}</td>
                   <td className="py-1 pr-2 text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                    <span className="sm:hidden">{ZODIAC_KO[h.sign].slice(0, -2)}</span>
-                    <span className="hidden sm:inline">{ZODIAC_KO[h.sign]}</span>
+                    <span className="sm:hidden">{t(`zodiac.short.${h.sign}`)}</span>
+                    <span className="hidden sm:inline">{t(`zodiac.${h.sign}`)}</span>
                   </td>
                   <td className="py-1 text-right font-mono text-gray-700 dark:text-gray-200">
                     {formatDegree(h.cuspLongitude)}
