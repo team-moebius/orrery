@@ -71,6 +71,7 @@ export default function DaewoonTable({ daewoon, unknownTime }: Props) {
                 <span className={`text-sm ${branchColorClass(branch)}`}>{dw.branchSipsin}</span>
                 <span className="text-sm text-gray-500 dark:text-gray-400">{dw.unseong}</span>
                 <span className="text-sm text-gray-500 dark:text-gray-400">{dw.sinsal}</span>
+                {dw.isGongmang && <span className="text-xs text-gray-600 dark:text-gray-300">空亡</span>}
               </div>
             )
           })}

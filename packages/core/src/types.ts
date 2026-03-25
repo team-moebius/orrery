@@ -92,6 +92,8 @@ export interface DaewoonItem {
   unseong: string;
   /** 12신살 (연지 기준) */
   sinsal: string;
+  /** 공망 여부 */
+  isGongmang: boolean;
 }
 
 /** 관계 분석 결과 */
@@ -125,6 +127,14 @@ export interface SpecialSals {
   munchang: number[];   // 문창귀인 위치 인덱스
   hongyeom: boolean;    // 홍염살
   geumyeo: number[];    // 금여록 위치 인덱스
+}
+
+/** 공망 정보 */
+export interface Gongmang {
+  /** 공망 지지 2개 */
+  branches: [string, string];
+  /** 공망에 든 주의 인덱스 (0=시, 1=일, 2=월, 3=년) */
+  pillarIndices: number[];
 }
 
 /** 좌법 항목 (지장간 → 일지 운성) */
@@ -161,6 +171,8 @@ export interface SajuResult {
   relations: AllRelations;
   /** 신살 */
   specialSals: SpecialSals;
+  /** 공망 */
+  gongmang: Gongmang;
   /** 좌법 (각 주 지장간 → 일지 운성) — 4주×N지장간 */
   jwabeop: JwaEntry[][];
   /** 인종법 (일지에 없는 십성 카테고리 인종) */

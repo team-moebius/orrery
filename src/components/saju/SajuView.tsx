@@ -29,7 +29,7 @@ export default function SajuView({ input }: Props) {
           <h2 className="text-base font-medium text-gray-700 dark:text-gray-200">四柱八字</h2>
           <CopyButton getText={() => sajuToText(result)} label="AI 해석용 복사" />
         </div>
-        <PillarTable pillars={result.pillars} unknownTime={input.unknownTime} />
+        <PillarTable pillars={result.pillars} unknownTime={input.unknownTime} gongmang={result.gongmang} />
       </section>
 
       {/* 팔자 관계 */}

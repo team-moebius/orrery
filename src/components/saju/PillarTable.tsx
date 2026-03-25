@@ -1,4 +1,4 @@
-import type { PillarDetail } from '@orrery/core/types'
+import type { PillarDetail, Gongmang } from '@orrery/core/types'
 import {
   stemColorClass,
   branchColorClass,
@@ -11,9 +11,11 @@ import {
 interface Props {
   pillars: PillarDetail[]  // [시, 일, 월, 년]
   unknownTime?: boolean
+  gongmang: Gongmang
 }
 
-export default function PillarTable({ pillars, unknownTime }: Props) {
+export default function PillarTable({ pillars, unknownTime, gongmang }: Props) {
+  const gmSet = new Set(gongmang.branches)
   const labels = ['時柱', '日柱', '月柱', '年柱']
 
   return (
@@ -118,6 +120,19 @@ export default function PillarTable({ pillars, unknownTime }: Props) {
                 }
               </td>
             ))}
+          </tr>
+          {/* 공망 */}
+          <tr className="text-sm text-gray-600 dark:text-gray-300">
+            <td className="pr-2 text-right text-gray-400 dark:text-gray-500 whitespace-nowrap">공망</td>
+            {pillars.map((p, i) => {
+              const isGm = i !== 1 && gmSet.has(p.pillar.branch)
+              const isUnknown = i === 0 && unknownTime
+              return (
+                <td key={i} className={`py-0.5 px-1 sm:px-3 ${isUnknown ? 'text-gray-300 dark:text-gray-600' : ''}`}>
+                  {isUnknown ? '?' : isGm ? <span className="text-gray-600 dark:text-gray-300">空亡</span> : ''}
+                </td>
+              )
+            })}
           </tr>
         </tbody>
       </table>

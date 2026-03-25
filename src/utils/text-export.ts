@@ -6,7 +6,7 @@ import { ZODIAC_SYMBOLS, PLANET_SYMBOLS, ASPECT_SYMBOLS, ROMAN, formatDegree } f
 
 /** 사주 결과를 CLI 형식 텍스트로 변환 */
 export function sajuToText(result: SajuResult): string {
-  const { input, pillars, daewoon, relations, specialSals } = result
+  const { input, pillars, daewoon, relations, specialSals, gongmang } = result
   const lines: string[] = []
   const genderChar = input.gender === 'M' ? '男' : '女'
 
@@ -24,7 +24,10 @@ export function sajuToText(result: SajuResult): string {
   lines.push(`십신   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : p.branchSipsin)).join('    ')}`)
   lines.push('─────')
   lines.push(`운성   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : p.unseong)).join('    ')}`)
+  const gmSet = new Set(gongmang.branches)
+  lines.push(`공망   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : (i !== 1 && gmSet.has(p.pillar.branch) ? '空 ' : '  '))).join('    ')}`)
   lines.push(`장간  ${pillars.map((p, i) => i === 0 && q ? '  ?  ' : p.jigang).join('  ')}`)
+  lines.push(`공망: ${gongmang.branches[0]}${gongmang.branches[1]}`)
   lines.push('')
 
   // 팔자 관계
@@ -128,7 +131,8 @@ export function sajuToText(result: SajuResult): string {
     lines.push(input.unknownTime ? '大運 (시간 모름 — 정오 기준, 시작 시기 수개월 오차 가능)' : '大運')
     lines.push('─────')
     for (const dw of daewoon) {
-      lines.push(`${String(dw.index).padStart(2)}運 (${String(dw.age).padStart(2)}세)  ${fmt2(dw.stemSipsin)}  ${dw.ganzi}  ${fmt2(dw.branchSipsin)}  (${dw.startDate.getFullYear()}年)`)
+      const gmMark = dw.isGongmang ? ' 空' : ''
+      lines.push(`${String(dw.index).padStart(2)}運 (${String(dw.age).padStart(2)}세)  ${fmt2(dw.stemSipsin)}  ${dw.ganzi}  ${fmt2(dw.branchSipsin)}  (${dw.startDate.getFullYear()}年)${gmMark}`)
     }
   }
 

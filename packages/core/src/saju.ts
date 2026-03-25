@@ -4,12 +4,12 @@
 import {
   getFourPillars, getDaewoon, getRelation, getJeonggi,
   getTwelveMeteor, getTwelveSpirit, getHiddenStems, analyzeAllRelations, getSpecialSals,
-  calculateJwabeop, calculateInjongbeop,
+  calculateJwabeop, calculateInjongbeop, getGongmang,
 } from './pillars.ts';
 import { STEM_INFO } from './constants.ts';
 import { adjustKdtToKst } from './kdt.ts';
 import type {
-  BirthInput, SajuResult, PillarDetail, Pillar, DaewoonItem,
+  BirthInput, SajuResult, PillarDetail, Pillar, DaewoonItem, Gongmang,
 } from './types.ts';
 
 /** 천간 → 십신 (한자) */
@@ -78,6 +78,17 @@ export function calculateSaju(input: BirthInput): SajuResult {
 
   const yearBranch = yp[1];
 
+  // 공망 계산
+  const gmBranches = getGongmang(dp);
+  const gmSet = new Set(gmBranches);
+  const gongmang: Gongmang = {
+    branches: gmBranches,
+    pillarIndices: branches.reduce<number[]>((acc, b, i) => {
+      if (i !== 1 && gmSet.has(b)) acc.push(i);  // 일주 자신은 제외
+      return acc;
+    }, []),
+  };
+
   const daewoon: DaewoonItem[] = rawDaewoon.map((dw, i) => {
     const age = dw.startDate.getFullYear() - year;
     const dwStem = dw.ganzi[0];
@@ -97,6 +108,7 @@ export function calculateSaju(input: BirthInput): SajuResult {
       branchSipsin: dwBranchSipsin,
       unseong,
       sinsal,
+      isGongmang: gmSet.has(dwBranch),
     };
   });
 
@@ -117,6 +129,7 @@ export function calculateSaju(input: BirthInput): SajuResult {
     daewoon,
     relations,
     specialSals,
+    gongmang,
     jwabeop,
     injongbeop,
   };

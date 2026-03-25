@@ -14,7 +14,7 @@ import {
   YANGIN_MAP, BAEKHO_PILLARS, GOEGANG_PILLARS,
   DOHWA_MAP, CHEONUL_MAP, CHEONDUK_MAP, WOLDUK_MAP,
   MUNCHANG_MAP, HONGYEOM_PILLARS, GEUMYEO_MAP,
-  JIJANGGAN, METEOR_LOOKUP, PILLAR_NAMES,
+  JIJANGGAN, METEOR_LOOKUP, PILLAR_NAMES, GONGMANG_TABLE,
 } from './constants.ts';
 import type {
   Element, Relation, RelationResult, PairRelation, AllRelations, SpecialSals,
@@ -839,6 +839,17 @@ export function getSpecialSals(
     hongyeom: HONGYEOM_PILLARS.has(dayPillar),
     geumyeo,
   };
+}
+
+// =============================================
+// 공망 (空亡)
+// =============================================
+
+/** 일주(간지) 기준 공망 지지 2개 반환 */
+export function getGongmang(dayGanzi: string): [string, string] {
+  const idx = HGANJI.indexOf(dayGanzi);
+  if (idx < 0) return ['', ''];
+  return GONGMANG_TABLE[Math.trunc(idx / 10)];
 }
 
 // =============================================

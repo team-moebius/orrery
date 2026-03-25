@@ -21,7 +21,7 @@ export {
   analyzePillarRelations, analyzeAllRelations,
   checkTripleCompose, checkDirectionalCompose,
   getSpecialSals, findTransits, calculateJwabeop, calculateInjongbeop,
-  calcPillarIndices, calcSolarTerms,
+  calcPillarIndices, calcSolarTerms, getGongmang,
 } from './pillars.ts'
 
 // 상수/심볼
@@ -32,6 +32,7 @@ export {
   PILLAR_NAMES, HGANJI, JIJANGGAN, METEOR_LOOKUP,
   TIAN_GAN, DI_ZHI, PALACE_NAMES,
   MAIN_STAR_NAMES, LUCKY_STAR_NAMES, SHA_STAR_NAMES,
+  GONGMANG_TABLE,
 } from './constants.ts'
 
 // 도시 데이터
@@ -47,7 +48,7 @@ export type {
   StemInfo, Relation, Meteor, Spirit,
   Pillar, PillarDetail, DaewoonItem,
   RelationResult, PairRelation, AllRelations,
-  SpecialSals, TransitItem, JwaEntry, InjongEntry,
+  SpecialSals, Gongmang, TransitItem, JwaEntry, InjongEntry,
   SajuResult,
   WuXingJu, ZiweiStar, ZiweiPalace, ZiweiChart,
   LiuYueInfo, LiuNianInfo,
