@@ -3,9 +3,18 @@ import { ELEMENT_HANJA, PILLAR_NAMES, PALACE_NAMES, MAIN_STAR_NAMES } from '@orr
 import { getDaxianList } from '@orrery/core/ziwei'
 import { formatRelation, fmt2 } from './format.ts'
 import { ZODIAC_SYMBOLS, PLANET_SYMBOLS, ASPECT_SYMBOLS, ROMAN, formatDegree } from '@orrery/core/natal'
+import { t as translate, getLocale } from '../i18n/index.ts'
+import type { Locale } from '../i18n/index.ts'
+
+/** 현재 로케일의 t() 래퍼 생성 */
+function makeT(locale?: Locale) {
+  const l = locale ?? getLocale()
+  return (key: string) => translate(l, key)
+}
 
 /** 사주 결과를 CLI 형식 텍스트로 변환 */
-export function sajuToText(result: SajuResult): string {
+export function sajuToText(result: SajuResult, locale?: Locale): string {
+  const t = makeT(locale)
   const { input, pillars, daewoon, relations, specialSals, gongmang } = result
   const lines: string[] = []
   const genderChar = input.gender === 'M' ? '男' : '女'
@@ -18,16 +27,16 @@ export function sajuToText(result: SajuResult): string {
 
   lines.push(`       ${labels.join('    ')}`)
   lines.push('─────')
-  lines.push(`십신   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : p.stemSipsin)).join('    ')}`)
-  lines.push(`천간     ${pillars.map((p, i) => i === 0 && q ? '?' : p.pillar.stem).join('      ')}`)
-  lines.push(`지지     ${pillars.map((p, i) => i === 0 && q ? '?' : p.pillar.branch).join('      ')}`)
-  lines.push(`십신   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : p.branchSipsin)).join('    ')}`)
+  lines.push(`${t('saju.sipsin')}   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : p.stemSipsin)).join('    ')}`)
+  lines.push(`${t('saju.cheongan')}     ${pillars.map((p, i) => i === 0 && q ? '?' : p.pillar.stem).join('      ')}`)
+  lines.push(`${t('saju.jiji')}     ${pillars.map((p, i) => i === 0 && q ? '?' : p.pillar.branch).join('      ')}`)
+  lines.push(`${t('saju.sipsin')}   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : p.branchSipsin)).join('    ')}`)
   lines.push('─────')
-  lines.push(`운성   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : p.unseong)).join('    ')}`)
+  lines.push(`${t('saju.unseong')}   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : p.unseong)).join('    ')}`)
   const gmSet = new Set(gongmang.branches)
-  lines.push(`공망   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : (i !== 1 && gmSet.has(p.pillar.branch) ? '空 ' : '  '))).join('    ')}`)
-  lines.push(`장간  ${pillars.map((p, i) => i === 0 && q ? '  ?  ' : p.jigang).join('  ')}`)
-  lines.push(`공망: ${gongmang.branches[0]}${gongmang.branches[1]}`)
+  lines.push(`${t('saju.gongmang')}   ${pillars.map((p, i) => fmt2(i === 0 && q ? '? ' : (i !== 1 && gmSet.has(p.pillar.branch) ? '空 ' : '  '))).join('    ')}`)
+  lines.push(`${t('saju.janggan')}  ${pillars.map((p, i) => i === 0 && q ? '  ?  ' : p.jigang).join('  ')}`)
+  lines.push(`${t('saju.gongmang')}: ${gongmang.branches[0]}${gongmang.branches[1]}`)
   lines.push('')
 
   // 팔자 관계
@@ -80,23 +89,23 @@ export function sajuToText(result: SajuResult): string {
   const salItems: string[] = []
   // 길신
   if (specialSals.cheonul.length > 0)
-    salItems.push(`천을귀인(${specialSals.cheonul.map(i => PILLAR_NAMES[i]).join(',')})`)
+    salItems.push(`${t('saju.sal.cheonul')}(${specialSals.cheonul.map(i => PILLAR_NAMES[i]).join(',')})`)
   if (specialSals.cheonduk.length > 0)
-    salItems.push(`천덕귀인(${specialSals.cheonduk.map(i => PILLAR_NAMES[i]).join(',')})`)
+    salItems.push(`${t('saju.sal.cheonduk')}(${specialSals.cheonduk.map(i => PILLAR_NAMES[i]).join(',')})`)
   if (specialSals.wolduk.length > 0)
-    salItems.push(`월덕귀인(${specialSals.wolduk.map(i => PILLAR_NAMES[i]).join(',')})`)
+    salItems.push(`${t('saju.sal.wolduk')}(${specialSals.wolduk.map(i => PILLAR_NAMES[i]).join(',')})`)
   if (specialSals.munchang.length > 0)
-    salItems.push(`문창귀인(${specialSals.munchang.map(i => PILLAR_NAMES[i]).join(',')})`)
+    salItems.push(`${t('saju.sal.munchang')}(${specialSals.munchang.map(i => PILLAR_NAMES[i]).join(',')})`)
   if (specialSals.geumyeo.length > 0)
-    salItems.push(`금여록(${specialSals.geumyeo.map(i => PILLAR_NAMES[i]).join(',')})`)
+    salItems.push(`${t('saju.sal.geumyeo')}(${specialSals.geumyeo.map(i => PILLAR_NAMES[i]).join(',')})`)
   // 흉신
   if (specialSals.yangin.length > 0)
-    salItems.push(`양인살(${specialSals.yangin.map(i => PILLAR_NAMES[i]).join(',')})`)
+    salItems.push(`${t('saju.sal.yangin')}(${specialSals.yangin.map(i => PILLAR_NAMES[i]).join(',')})`)
   if (specialSals.dohwa.length > 0)
-    salItems.push(`도화살(${specialSals.dohwa.map(i => PILLAR_NAMES[i]).join(',')})`)
-  if (specialSals.baekho) salItems.push('백호살')
-  if (specialSals.goegang) salItems.push('괴강살')
-  if (specialSals.hongyeom) salItems.push('홍염살')
+    salItems.push(`${t('saju.sal.dohwa')}(${specialSals.dohwa.map(i => PILLAR_NAMES[i]).join(',')})`)
+  if (specialSals.baekho) salItems.push(t('saju.sal.baekho'))
+  if (specialSals.goegang) salItems.push(t('saju.sal.goegang'))
+  if (specialSals.hongyeom) salItems.push(t('saju.sal.hongyeom'))
   if (salItems.length > 0) {
     lines.push('神殺')
     lines.push('─────')
@@ -106,7 +115,7 @@ export function sajuToText(result: SajuResult): string {
 
   // 좌법
   if (result.jwabeop) {
-    lines.push('坐法 (지장간 → 일지 운성)')
+    lines.push(`坐法 (${t('saju.janggan')} → ${t('saju.unseong')})`)
     lines.push('─────')
     const pillarLabels = ['時柱', '日柱', '月柱', '年柱']
     result.jwabeop.forEach((entries, i) => {
@@ -119,7 +128,7 @@ export function sajuToText(result: SajuResult): string {
 
   // 인종법
   if (result.injongbeop && result.injongbeop.length > 0) {
-    lines.push('引從法 (누락 십성 양간 인종)')
+    lines.push(`引從法 (${t('saju.injong.desc').replace(/^— /, '')})`)
     lines.push('─────')
     const parts = result.injongbeop.map(e => `${e.yangStem} ${e.category} → ${e.unseong}從`)
     lines.push(parts.join(' · '))
@@ -128,11 +137,11 @@ export function sajuToText(result: SajuResult): string {
 
   // 대운
   if (daewoon.length > 0) {
-    lines.push(input.unknownTime ? '大運 (시간 모름 — 정오 기준, 시작 시기 수개월 오차 가능)' : '大運')
+    lines.push(input.unknownTime ? `大運 (${t('saju.unknownTimeWarning')})` : '大運')
     lines.push('─────')
     for (const dw of daewoon) {
       const gmMark = dw.isGongmang ? ' 空' : ''
-      lines.push(`${String(dw.index).padStart(2)}運 (${String(dw.age).padStart(2)}세)  ${fmt2(dw.stemSipsin)}  ${dw.ganzi}  ${fmt2(dw.branchSipsin)}  (${dw.startDate.getFullYear()}年)${gmMark}`)
+      lines.push(`${String(dw.index).padStart(2)}運 (${String(dw.age).padStart(2)}${t('saju.ageSuffix')})  ${fmt2(dw.stemSipsin)}  ${dw.ganzi}  ${fmt2(dw.branchSipsin)}  (${dw.startDate.getFullYear()}年)${gmMark}`)
     }
   }
 
@@ -250,11 +259,12 @@ export function ziweiToText(chart: ZiweiChart, liunian?: LiuNianInfo): string {
 
 /** Natal Chart를 텍스트로 변환 */
 export function natalToText(chart: NatalChart, houseSystemName = 'Placidus'): string {
+  const t = makeT('en')
   const lines: string[] = []
   const hasHouses = chart.angles != null
 
   lines.push('Natal Chart')
-  if (!hasHouses) lines.push('(시간 모름 — 정오 기준, ASC·하우스 제외)')
+  if (!hasHouses) lines.push(`(${t('natal.unknownTime')})`)
   lines.push('═════')
   lines.push('')
 
@@ -263,7 +273,7 @@ export function natalToText(chart: NatalChart, houseSystemName = 'Placidus'): st
     lines.push('Angles')
     lines.push('─────')
     for (const [label, a] of [['ASC', chart.angles.asc], ['MC', chart.angles.mc]] as const) {
-      lines.push(`${label}  ${ZODIAC_SYMBOLS[a.sign]} ${a.sign} ${formatDegree(a.longitude)}`)
+      lines.push(`${label}  ${ZODIAC_SYMBOLS[a.sign]} ${t(`zodiac.${a.sign}`)} ${formatDegree(a.longitude)}`)
     }
     lines.push('')
   }
@@ -275,8 +285,10 @@ export function natalToText(chart: NatalChart, houseSystemName = 'Placidus'): st
     const retro = p.isRetrograde ? ' R' : '  '
     const sym = PLANET_SYMBOLS[p.id]
     const signSym = ZODIAC_SYMBOLS[p.sign]
+    const planetName = t(`planet.${p.id}`)
+    const signName = t(`zodiac.${p.sign}`)
     const housePart = p.house != null ? ` ${ROMAN[p.house - 1].padStart(5)}` : ''
-    lines.push(`${sym} ${p.id.padEnd(10)} ${signSym} ${p.sign.padEnd(12)} ${formatDegree(p.longitude)}${retro}${housePart}`)
+    lines.push(`${sym} ${planetName.padEnd(10)} ${signSym} ${signName.padEnd(12)} ${formatDegree(p.longitude)}${retro}${housePart}`)
   }
   lines.push('')
 
@@ -285,7 +297,7 @@ export function natalToText(chart: NatalChart, houseSystemName = 'Placidus'): st
     lines.push(`Houses (${houseSystemName})`)
     lines.push('─────')
     for (const h of chart.houses) {
-      lines.push(`${ROMAN[h.number - 1].padStart(4)}  ${ZODIAC_SYMBOLS[h.sign]} ${h.sign.padEnd(12)} ${formatDegree(h.cuspLongitude)}`)
+      lines.push(`${ROMAN[h.number - 1].padStart(4)}  ${ZODIAC_SYMBOLS[h.sign]} ${t(`zodiac.${h.sign}`).padEnd(12)} ${formatDegree(h.cuspLongitude)}`)
     }
     lines.push('')
   }
@@ -297,7 +309,7 @@ export function natalToText(chart: NatalChart, houseSystemName = 'Placidus'): st
     const sym1 = PLANET_SYMBOLS[a.planet1]
     const sym2 = PLANET_SYMBOLS[a.planet2]
     const aspSym = ASPECT_SYMBOLS[a.type]
-    lines.push(`${sym1} ${a.planet1.padEnd(10)} ${aspSym} ${sym2} ${a.planet2.padEnd(10)} orb ${a.orb.toFixed(1)}°`)
+    lines.push(`${sym1} ${t(`planet.${a.planet1}`).padEnd(10)} ${aspSym} ${sym2} ${t(`planet.${a.planet2}`).padEnd(10)} orb ${a.orb.toFixed(1)}°`)
   }
 
   return lines.join('\n')
