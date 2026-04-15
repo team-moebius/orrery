@@ -30,6 +30,7 @@ const zh: Record<string, string> = {
   'form.manualInput': '手动输入',
   'form.latitude': '纬度',
   'form.longitude': '经度',
+  'form.coordinateInvalid': '请输入有效的数字坐标。',
   'form.timezoneDefault': '自动推断时区：',
   'form.timezoneAutoDetectFailed': '无法根据当前坐标自动推断时区，请检查坐标。',
   'form.advanced': '高级设置',

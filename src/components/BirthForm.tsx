@@ -6,6 +6,12 @@ import { SEOUL, formatCityName } from '@orrery/core/cities'
 import CityCombobox from './CityCombobox.tsx'
 import { useLocale } from '../i18n/index.ts'
 import { getTimeZoneDisplayLabelAtLocalTime, inferTimeZoneFromCoordinates } from '../utils/timezones.ts'
+import {
+  formatCoordinate,
+  isCoordinateDraft,
+  parseCoordinateDraft,
+  stepCoordinate,
+} from '../utils/coordinate-input.ts'
 import logo from '../assets/icon-512.png'
 
 export interface BirthFormHandle {
@@ -48,6 +54,8 @@ function loadSaved(): SavedFormState | null {
 const now = new Date()
 const currentYear = now.getFullYear()
 const saved = loadSaved()
+const initialLatitude = saved?.latitude ?? SEOUL.lat
+const initialLongitude = saved?.longitude ?? SEOUL.lon
 
 const selectClass =
   'w-full h-10 pl-3 pr-8 border border-gray-200 dark:border-gray-700 rounded-lg text-base text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900 ' +
@@ -55,6 +63,10 @@ const selectClass =
   "bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%239ca3af%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] " +
   'focus:outline-none focus:ring-2 focus:ring-gray-800/20 dark:focus:ring-gray-200/20 focus:border-gray-400 dark:focus:border-gray-500 ' +
   'transition-all disabled:opacity-40 disabled:bg-gray-50 dark:disabled:bg-gray-800'
+
+const inputClass =
+  'w-full h-10 px-3 border border-gray-200 dark:border-gray-700 rounded-lg text-base text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900 ' +
+  'focus:outline-none focus:ring-2 focus:ring-gray-800/20 dark:focus:ring-gray-200/20 focus:border-gray-400 dark:focus:border-gray-500 transition-all'
 
 
 const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubmit, externalState, onExternalStateConsumed }, ref) {
@@ -70,8 +82,10 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [selectedCity, setSelectedCity] = useState<City | null>(saved?.city ?? SEOUL)
   const [manualCoords, setManualCoords] = useState(saved?.manualCoords ?? false)
-  const [latitude, setLatitude] = useState(saved?.latitude ?? SEOUL.lat)
-  const [longitude, setLongitude] = useState(saved?.longitude ?? SEOUL.lon)
+  const [latitude, setLatitude] = useState(initialLatitude)
+  const [longitude, setLongitude] = useState(initialLongitude)
+  const [latitudeInput, setLatitudeInput] = useState(() => formatCoordinate(initialLatitude))
+  const [longitudeInput, setLongitudeInput] = useState(() => formatCoordinate(initialLongitude))
   const [timezoneError, setTimezoneError] = useState<string | null>(null)
 
   const inferredTimezone = useMemo(
@@ -137,6 +151,49 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
     setTimezoneError(null)
   }, [latitude, longitude])
 
+  function syncCoordinates(nextLatitude: number, nextLongitude: number) {
+    setLatitude(nextLatitude)
+    setLongitude(nextLongitude)
+    setLatitudeInput(formatCoordinate(nextLatitude))
+    setLongitudeInput(formatCoordinate(nextLongitude))
+  }
+
+  function applyLatitude(nextLatitude: number) {
+    setLatitude(nextLatitude)
+    setLatitudeInput(formatCoordinate(nextLatitude))
+  }
+
+  function applyLongitude(nextLongitude: number) {
+    setLongitude(nextLongitude)
+    setLongitudeInput(formatCoordinate(nextLongitude))
+  }
+
+  function handleCoordinateChange(
+    value: string,
+    setDraft: (value: string) => void,
+    setValue: (value: number) => void,
+  ) {
+    if (!isCoordinateDraft(value)) return
+
+    setDraft(value)
+
+    const parsed = parseCoordinateDraft(value)
+    if (parsed != null) setValue(parsed)
+  }
+
+  function handleCoordinateKeyDown(
+    e: React.KeyboardEvent<HTMLInputElement>,
+    draft: string,
+    current: number,
+    apply: (value: number) => void,
+  ) {
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
+
+    e.preventDefault()
+    const baseValue = parseCoordinateDraft(draft) ?? current
+    apply(stepCoordinate(baseValue, e.key === 'ArrowUp' ? 1 : -1))
+  }
+
   useEffect(() => {
     if (!externalState) return
     const s = externalState
@@ -150,8 +207,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
     setJasiMethod(s.jasiMethod)
     setSelectedCity(s.city)
     setManualCoords(s.manualCoords)
-    setLatitude(s.latitude)
-    setLongitude(s.longitude)
+    syncCoordinates(s.latitude, s.longitude)
     setTimezoneError(null)
     onExternalStateConsumed?.()
     const birthInput = buildBirthInput(s)
@@ -162,16 +218,26 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
 
   function handleCitySelect(city: City) {
     setSelectedCity(city)
-    setLatitude(city.lat)
-    setLongitude(city.lon)
+    syncCoordinates(city.lat, city.lon)
     setTimezoneError(null)
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+
+    const resolvedLatitude = manualCoords ? parseCoordinateDraft(latitudeInput) : latitude
+    const resolvedLongitude = manualCoords ? parseCoordinateDraft(longitudeInput) : longitude
+
+    if (resolvedLatitude == null || resolvedLongitude == null) {
+      setTimezoneError(t('form.coordinateInvalid'))
+      return
+    }
+
+    if (manualCoords) syncCoordinates(resolvedLatitude, resolvedLongitude)
+
     const state: SavedFormState = {
       year, month, day, hour, minute, gender, unknownTime, jasiMethod,
-      city: selectedCity, manualCoords, latitude, longitude,
+      city: selectedCity, manualCoords, latitude: resolvedLatitude, longitude: resolvedLongitude,
     }
     const validationError = getTimezoneValidationError(state)
     if (validationError) {
@@ -310,8 +376,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                   setManualCoords(false)
                   setTimezoneError(null)
                   if (selectedCity) {
-                    setLatitude(selectedCity.lat)
-                    setLongitude(selectedCity.lon)
+                    syncCoordinates(selectedCity.lat, selectedCity.lon)
                   }
                 }}
                 className={`px-4 text-base rounded-md transition-all ${
@@ -342,21 +407,29 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                 <div>
                   <label className="block text-sm text-gray-400 dark:text-gray-500 mb-1">{t('form.latitude')}</label>
                   <input
-                    type="number"
-                    step="0.0001"
-                    value={latitude}
-                    onChange={e => setLatitude(Number(e.target.value))}
-                    className="w-full h-10 px-3 border border-gray-200 dark:border-gray-700 rounded-lg text-base text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-800/20 dark:focus:ring-gray-200/20 focus:border-gray-400 dark:focus:border-gray-500 transition-all"
+                    type="text"
+                    inputMode="decimal"
+                    value={latitudeInput}
+                    onChange={e => handleCoordinateChange(e.target.value, setLatitudeInput, setLatitude)}
+                    onBlur={() => setLatitudeInput(formatCoordinate(latitude))}
+                    onKeyDown={e => handleCoordinateKeyDown(e, latitudeInput, latitude, applyLatitude)}
+                    autoComplete="off"
+                    spellCheck={false}
+                    className={inputClass}
                   />
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 dark:text-gray-500 mb-1">{t('form.longitude')}</label>
                   <input
-                    type="number"
-                    step="0.0001"
-                    value={longitude}
-                    onChange={e => setLongitude(Number(e.target.value))}
-                    className="w-full h-10 px-3 border border-gray-200 dark:border-gray-700 rounded-lg text-base text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-800/20 dark:focus:ring-gray-200/20 focus:border-gray-400 dark:focus:border-gray-500 transition-all"
+                    type="text"
+                    inputMode="decimal"
+                    value={longitudeInput}
+                    onChange={e => handleCoordinateChange(e.target.value, setLongitudeInput, setLongitude)}
+                    onBlur={() => setLongitudeInput(formatCoordinate(longitude))}
+                    onKeyDown={e => handleCoordinateKeyDown(e, longitudeInput, longitude, applyLongitude)}
+                    autoComplete="off"
+                    spellCheck={false}
+                    className={inputClass}
                   />
                 </div>
               </div>

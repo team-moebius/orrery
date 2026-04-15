@@ -30,6 +30,7 @@ const en: Record<string, string> = {
   'form.manualInput': 'Manual Input',
   'form.latitude': 'Latitude',
   'form.longitude': 'Longitude',
+  'form.coordinateInvalid': 'Please enter valid numeric coordinates.',
   'form.timezoneDefault': 'Inferred time zone:',
   'form.timezoneAutoDetectFailed': 'The time zone could not be inferred from the current coordinates. Please check the coordinates.',
   'form.advanced': 'Advanced Settings',

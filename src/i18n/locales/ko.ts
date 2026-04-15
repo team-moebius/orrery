@@ -30,6 +30,7 @@ const ko: Record<string, string> = {
   'form.manualInput': '직접 입력',
   'form.latitude': '위도',
   'form.longitude': '경도',
+  'form.coordinateInvalid': '좌표를 올바른 숫자로 입력해주세요.',
   'form.timezoneDefault': '자동 추론 시간대:',
   'form.timezoneAutoDetectFailed': '현재 좌표로 시간대를 자동 추론하지 못했습니다. 좌표를 확인해주세요.',
   'form.advanced': '고급 설정',
