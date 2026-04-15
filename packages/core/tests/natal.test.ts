@@ -96,4 +96,35 @@ describe('calculateNatal', () => {
     expect(fortuna.house).toBeGreaterThanOrEqual(1)
     expect(fortuna.house).toBeLessThanOrEqual(12)
   })
+
+  it('uses explicit IANA time zones for overseas births', async () => {
+    const losAngeles = await calculateNatal({
+      year: 1990,
+      month: 7,
+      day: 1,
+      hour: 9,
+      minute: 0,
+      gender: 'M',
+      latitude: 34.0522,
+      longitude: -118.2437,
+      timezone: 'America/Los_Angeles',
+    })
+    const utc = await calculateNatal({
+      year: 1990,
+      month: 7,
+      day: 1,
+      hour: 16,
+      minute: 0,
+      gender: 'M',
+      latitude: 34.0522,
+      longitude: -118.2437,
+      timezone: 'UTC',
+    })
+    const laSun = losAngeles.planets.find(p => p.id === 'Sun')!
+    const utcSun = utc.planets.find(p => p.id === 'Sun')!
+
+    expect(laSun.longitude).toBeCloseTo(utcSun.longitude, 6)
+    expect(losAngeles.angles!.asc.longitude).toBeCloseTo(utc.angles!.asc.longitude, 6)
+    expect(losAngeles.angles!.mc.longitude).toBeCloseTo(utc.angles!.mc.longitude, 6)
+  })
 })

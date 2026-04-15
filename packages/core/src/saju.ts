@@ -8,6 +8,7 @@ import {
 } from './pillars.ts';
 import { STEM_INFO } from './constants.ts';
 import { adjustKdtToKst } from './kdt.ts';
+import { adjustBirthInputToSolarTime, DEFAULT_TIMEZONE } from './timezone.ts';
 import type {
   BirthInput, SajuResult, PillarDetail, Pillar, DaewoonItem, Gongmang,
 } from './types.ts';
@@ -20,9 +21,12 @@ function getSipsin(dayStem: string, targetStem: string): string {
 
 /** BirthInput → SajuResult */
 export function calculateSaju(input: BirthInput): SajuResult {
-  // KDT(하계표준시) → KST 보정
-  const kst = adjustKdtToKst(input.year, input.month, input.day, input.hour, input.minute);
-  const { year, month, day, hour, minute } = kst;
+  // Asia/Seoul(또는 미지정) 출생은 KST 벽시계를 기준으로 하는 한국 사주 관례를 유지하기 위해
+  // 경도 기반 진태양시 보정을 건너뛰고 KDT→KST 보정만 적용한다.
+  const useSolarTime = input.timezone != null && input.timezone !== DEFAULT_TIMEZONE;
+  const { year, month, day, hour, minute } = useSolarTime
+    ? adjustBirthInputToSolarTime(input)
+    : adjustKdtToKst(input.year, input.month, input.day, input.hour, input.minute);
   const { gender } = input;
   const isMale = gender === 'M';
 

@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { getFourPillars } from '../src/pillars.ts'
+import { calculateSaju } from '../src/saju.ts'
 import { adjustKdtToKst } from '../src/kdt.ts'
+import { adjustBirthInputToSolarTime } from '../src/timezone.ts'
 import { PILLAR_FIXTURES } from './fixtures.ts'
 
 describe('getFourPillars', () => {
@@ -87,5 +89,78 @@ describe('자시법 (JasiMethod)', () => {
     const unified = getFourPillars(2000, 1, 2, 0, 30, 'unified')
     const split = getFourPillars(2000, 1, 2, 0, 30, 'split')
     expect(unified).toEqual(split)
+  })
+})
+
+describe('timezone handling', () => {
+  it('converts overseas births to local solar time before pillar calculation', () => {
+    const solar = adjustBirthInputToSolarTime({
+      year: 1990,
+      month: 7,
+      day: 1,
+      hour: 9,
+      minute: 0,
+      gender: 'M',
+      longitude: -118.2437,
+      timezone: 'America/Los_Angeles',
+    })
+    const dst = calculateSaju({
+      year: 1990,
+      month: 7,
+      day: 1,
+      hour: 9,
+      minute: 0,
+      gender: 'M',
+      longitude: -118.2437,
+      timezone: 'America/Los_Angeles',
+    })
+    const solarInput = calculateSaju({
+      year: solar.year,
+      month: solar.month,
+      day: solar.day,
+      hour: solar.hour,
+      minute: solar.minute,
+      gender: 'M',
+    })
+    expect(dst.pillars.map(p => p.pillar.ganzi)).toEqual(solarInput.pillars.map(p => p.pillar.ganzi))
+  })
+
+  it('still applies KDT→KST correction when timezone is Asia/Seoul', () => {
+    // 1988-07-01 10:00은 KDT 기간. timezone 명시 여부와 무관하게 09:00 KST 기준 결과가 나와야 한다.
+    const withTimezone = calculateSaju({
+      year: 1988, month: 7, day: 1, hour: 10, minute: 0,
+      gender: 'M', timezone: 'Asia/Seoul',
+    })
+    const withoutTimezone = calculateSaju({
+      year: 1988, month: 7, day: 1, hour: 10, minute: 0,
+      gender: 'M',
+    })
+    expect(withTimezone.pillars.map(p => p.pillar.ganzi))
+      .toEqual(withoutTimezone.pillars.map(p => p.pillar.ganzi))
+  })
+
+  it('uses longitude to derive local solar time when timezone is provided', () => {
+    const left = adjustBirthInputToSolarTime({
+      year: 1990,
+      month: 1,
+      day: 1,
+      hour: 7,
+      minute: 35,
+      gender: 'M',
+      longitude: 126.978,
+      timezone: 'Etc/GMT-1',
+    })
+    const right = adjustBirthInputToSolarTime({
+      year: 1990,
+      month: 1,
+      day: 1,
+      hour: 7,
+      minute: 35,
+      gender: 'M',
+      longitude: 2.3522,
+      timezone: 'Etc/GMT-1',
+    })
+
+    expect(left.hour).not.toBe(right.hour)
   })
 })

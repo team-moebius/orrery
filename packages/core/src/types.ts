@@ -28,6 +28,8 @@ export interface BirthInput {
   latitude?: number;
   /** 경도 (기본값: 127.0992 서울) */
   longitude?: number;
+  /** IANA 타임존 ID (예: 'Asia/Seoul', 'America/Los_Angeles') */
+  timezone?: string;
 }
 
 /** 천간 정보 */
