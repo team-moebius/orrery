@@ -2,9 +2,10 @@ import { useState, useMemo, useEffect, useImperativeHandle, forwardRef } from 'r
 import type { BirthInput, Gender, JasiMethod } from '@orrery/core/types'
 import { isKoreanDaylightTime } from '@orrery/core/natal'
 import type { City } from '@orrery/core/cities'
-import { SEOUL } from '@orrery/core/cities'
+import { SEOUL, formatCityName } from '@orrery/core/cities'
 import CityCombobox from './CityCombobox.tsx'
 import { useLocale } from '../i18n/index.ts'
+import { getTimeZoneDisplayLabelAtLocalTime, inferTimeZoneFromCoordinates } from '../utils/timezones.ts'
 import logo from '../assets/icon-512.png'
 
 export interface BirthFormHandle {
@@ -71,6 +72,59 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
   const [manualCoords, setManualCoords] = useState(saved?.manualCoords ?? false)
   const [latitude, setLatitude] = useState(saved?.latitude ?? SEOUL.lat)
   const [longitude, setLongitude] = useState(saved?.longitude ?? SEOUL.lon)
+  const [timezoneError, setTimezoneError] = useState<string | null>(null)
+
+  const inferredTimezone = useMemo(
+    () => inferTimeZoneFromCoordinates(latitude, longitude),
+    [latitude, longitude],
+  )
+  const locationSummary = useMemo(() => {
+    if (manualCoords) {
+      return `${t('form.coordInput')} · ${t('form.latitude')} ${latitude.toFixed(4)} · ${t('form.longitude')} ${longitude.toFixed(4)}`
+    }
+    if (selectedCity) {
+      return `${formatCityName(selectedCity)} · ${t('form.latitude')} ${latitude.toFixed(4)} · ${t('form.longitude')} ${longitude.toFixed(4)}`
+    }
+    return `${t('form.latitude')} ${latitude.toFixed(4)} · ${t('form.longitude')} ${longitude.toFixed(4)}`
+  }, [manualCoords, selectedCity, latitude, longitude, t])
+  const timezoneDisplayLabel = useMemo(() => {
+    if (!inferredTimezone) return null
+    return getTimeZoneDisplayLabelAtLocalTime(
+      inferredTimezone,
+      year,
+      month,
+      day,
+      unknownTime ? 12 : hour,
+      unknownTime ? 0 : minute,
+    )
+  }, [inferredTimezone, year, month, day, hour, minute, unknownTime])
+
+  function getTimezoneValidationError(state: SavedFormState): string | null {
+    if (!inferTimeZoneFromCoordinates(state.latitude, state.longitude)) {
+      return t('form.timezoneAutoDetectFailed')
+    }
+
+    return null
+  }
+
+  function buildBirthInput(state: SavedFormState): BirthInput | null {
+    const effectiveStateTimezone = inferTimeZoneFromCoordinates(state.latitude, state.longitude)
+    if (getTimezoneValidationError(state)) return null
+    if (!effectiveStateTimezone) return null
+    return {
+      year: state.year,
+      month: state.month,
+      day: state.day,
+      hour: state.unknownTime ? 12 : state.hour,
+      minute: state.unknownTime ? 0 : state.minute,
+      gender: state.gender,
+      unknownTime: state.unknownTime,
+      ...(!state.unknownTime && { jasiMethod: state.jasiMethod }),
+      latitude: state.latitude,
+      longitude: state.longitude,
+      timezone: effectiveStateTimezone,
+    }
+  }
 
   useImperativeHandle(ref, () => ({
     getCurrentState: (): SavedFormState => ({
@@ -78,6 +132,10 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
       city: selectedCity, manualCoords, latitude, longitude,
     }),
   }))
+
+  useEffect(() => {
+    setTimezoneError(null)
+  }, [latitude, longitude])
 
   useEffect(() => {
     if (!externalState) return
@@ -94,18 +152,10 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
     setManualCoords(s.manualCoords)
     setLatitude(s.latitude)
     setLongitude(s.longitude)
+    setTimezoneError(null)
     onExternalStateConsumed?.()
-    // 프로필 선택 시 자동 계산
-    onSubmit({
-      year: s.year, month: s.month, day: s.day,
-      hour: s.unknownTime ? 12 : s.hour,
-      minute: s.unknownTime ? 0 : s.minute,
-      gender: s.gender,
-      unknownTime: s.unknownTime,
-      ...(!s.unknownTime && { jasiMethod: s.jasiMethod }),
-      latitude: s.latitude,
-      longitude: s.longitude,
-    })
+    const birthInput = buildBirthInput(s)
+    if (birthInput) onSubmit(birthInput)
   }, [externalState]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isKDT = useMemo(() => isKoreanDaylightTime(year, month, day), [year, month, day])
@@ -114,6 +164,7 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
     setSelectedCity(city)
     setLatitude(city.lat)
     setLongitude(city.lon)
+    setTimezoneError(null)
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -122,17 +173,16 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
       year, month, day, hour, minute, gender, unknownTime, jasiMethod,
       city: selectedCity, manualCoords, latitude, longitude,
     }
+    const validationError = getTimezoneValidationError(state)
+    if (validationError) {
+      setTimezoneError(validationError)
+      return
+    }
+    setTimezoneError(null)
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) } catch { /* quota exceeded — ignore */ }
-    onSubmit({
-      year, month, day,
-      hour: unknownTime ? 12 : hour,
-      minute: unknownTime ? 0 : minute,
-      gender,
-      unknownTime,
-      ...(!unknownTime && { jasiMethod }),
-      latitude,
-      longitude,
-    })
+    const birthInput = buildBirthInput(state)
+    if (!birthInput) return
+    onSubmit(birthInput)
   }
 
   return (
@@ -250,26 +300,42 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
             </div>
           </fieldset>
 
-          {/* 위치 (Natal Chart용) */}
+          {/* 위치 */}
           <fieldset className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <legend className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('form.birthPlace')}</legend>
-              <label className="flex items-center gap-1.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={manualCoords}
-                  onChange={e => {
-                    setManualCoords(e.target.checked)
-                    if (!e.target.checked && selectedCity) {
-                      setLatitude(selectedCity.lat)
-                      setLongitude(selectedCity.lon)
-                    }
-                  }}
-                  className="sr-only peer"
-                />
-                <div className="w-8 h-[18px] bg-gray-200 dark:bg-gray-700 rounded-full peer-checked:bg-gray-800 dark:peer-checked:bg-gray-200 relative transition-colors after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:w-3 after:h-3 after:bg-white after:rounded-full after:transition-transform peer-checked:after:translate-x-3.5" />
-                <span className="text-sm text-gray-500 dark:text-gray-400">{t('form.manualInput')}</span>
-              </label>
+            <legend className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{t('form.birthPlace')}</legend>
+            <div className="inline-flex h-10 rounded-lg bg-gray-100 dark:bg-gray-800 p-1 mb-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setManualCoords(false)
+                  setTimezoneError(null)
+                  if (selectedCity) {
+                    setLatitude(selectedCity.lat)
+                    setLongitude(selectedCity.lon)
+                  }
+                }}
+                className={`px-4 text-base rounded-md transition-all ${
+                  !manualCoords
+                    ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm font-medium'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                }`}
+              >
+                {t('form.citySearch')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setManualCoords(true)
+                  setTimezoneError(null)
+                }}
+                className={`px-4 text-base rounded-md transition-all ${
+                  manualCoords
+                    ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm font-medium'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                }`}
+              >
+                {t('form.coordInput')}
+              </button>
             </div>
             {manualCoords ? (
               <div className="grid grid-cols-2 gap-2">
@@ -295,7 +361,27 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
                 </div>
               </div>
             ) : (
-              <CityCombobox selectedCity={selectedCity} onSelect={handleCitySelect} />
+              <>
+                <CityCombobox selectedCity={selectedCity} onSelect={handleCitySelect} />
+                <p className="mt-1.5 text-sm text-gray-400 dark:text-gray-500 leading-relaxed">
+                  {locationSummary}
+                </p>
+              </>
+            )}
+            {manualCoords && (
+              <p className="mt-1.5 text-sm text-gray-400 dark:text-gray-500 leading-relaxed">
+                {locationSummary}
+              </p>
+            )}
+            {timezoneDisplayLabel && (
+              <p className="mt-1.5 text-sm text-gray-400 dark:text-gray-500 leading-relaxed">
+                {t('form.timezoneDefault')} {timezoneDisplayLabel}
+              </p>
+            )}
+            {timezoneError && (
+              <div className="mt-2 px-3 py-2 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400 leading-relaxed">
+                {timezoneError}
+              </div>
             )}
           </fieldset>
 

@@ -30,7 +30,10 @@ export default function ZiweiView({ input }: Props) {
   }
 
   const chart = useMemo(
-    () => createChart(input.year, input.month, input.day, input.hour, input.minute, input.gender === 'M'),
+    () => createChart(
+      input.year, input.month, input.day,
+      input.hour, input.minute, input.gender === 'M', input.timezone, input.longitude,
+    ),
     [input],
   )
 

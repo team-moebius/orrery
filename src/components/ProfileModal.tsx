@@ -2,8 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import type { SavedFormState } from './BirthForm.tsx'
 import { loadProfiles, addProfile, updateProfile, deleteProfile, exportProfiles, importProfiles } from '../utils/profiles.ts'
 import type { Profile } from '../utils/profiles.ts'
-import { getFourPillars, toHangul } from '@orrery/core/pillars'
+import { toHangul } from '@orrery/core/pillars'
+import { calculateSaju } from '@orrery/core/saju'
 import { useLocale } from '../i18n/index.ts'
+import { inferTimeZoneFromCoordinates } from '../utils/timezones.ts'
 
 interface Props {
   open: boolean
@@ -19,9 +21,30 @@ function formatSummary(data: SavedFormState, t: (key: string) => string): string
     : `${String(data.hour).padStart(2, '0')}:${String(data.minute).padStart(2, '0')}`
   const gender = data.gender === 'M' ? t('profile.male') : t('profile.female')
   const city = data.city?.name ?? t('profile.manualInput')
-  const [, , dp] = getFourPillars(data.year, data.month, data.day, data.hour, data.minute)
-  const ilju = toHangul(dp[0]) + toHangul(dp[1]) + t('profile.ilju')
-  return `${date} ${time} ${gender} ${city} ${ilju}`
+  const effectiveTimezone = inferTimeZoneFromCoordinates(data.latitude, data.longitude) ?? ''
+  const timezone = effectiveTimezone
+    ? ` ${effectiveTimezone}`
+    : ''
+  try {
+    const saju = calculateSaju({
+      year: data.year,
+      month: data.month,
+      day: data.day,
+      hour: data.hour,
+      minute: data.minute,
+      gender: data.gender,
+      unknownTime: data.unknownTime,
+      jasiMethod: data.jasiMethod,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      ...(effectiveTimezone ? { timezone: effectiveTimezone } : {}),
+    })
+    const dp = saju.pillars[1].pillar.ganzi
+    const ilju = toHangul(dp[0]) + toHangul(dp[1]) + t('profile.ilju')
+    return `${date} ${time} ${gender} ${city}${timezone} ${ilju}`
+  } catch {
+    return `${date} ${time} ${gender} ${city}${timezone}`
+  }
 }
 
 export default function ProfileModal({ open, onClose, getCurrentFormState, onSelect }: Props) {
