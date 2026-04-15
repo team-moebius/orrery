@@ -18,6 +18,8 @@ const zh: Record<string, string> = {
   'form.monthSuffix': '月',
   'form.daySuffix': '日',
   'form.kdt': '该时段处于88奥运会夏令时（KDT, UTC+10）期间，所有计算已自动调整。',
+  'form.kstHistoricalOffset': '该日期处于韩国标准时的历史偏差时段（1948-1951 KDT、1954-1961 UTC+8:30/+9:30、1987-1988 KDT），所有计算已按 KST 壁钟自动规范化。',
+  'form.dstGapError': '您输入的时间位于夏令时(DST)切换的空缺时段，实际并不存在。请确认出生记录的时区。',
   'form.time': '时间',
   'form.unknown': '不详',
   'form.hourSuffix': '时',

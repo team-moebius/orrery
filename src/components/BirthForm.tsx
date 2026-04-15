@@ -1,11 +1,15 @@
 import { useState, useMemo, useEffect, useImperativeHandle, forwardRef } from 'react'
 import type { BirthInput, Gender, JasiMethod } from '@orrery/core/types'
-import { isKoreanDaylightTime } from '@orrery/core/natal'
+import { isKoreanDaylightTime, isKoreanHistoricalTimeAnomaly } from '@orrery/core/natal'
 import type { City } from '@orrery/core/cities'
 import { SEOUL, formatCityName } from '@orrery/core/cities'
 import CityCombobox from './CityCombobox.tsx'
 import { useLocale } from '../i18n/index.ts'
-import { getTimeZoneDisplayLabelAtLocalTime, inferTimeZoneFromCoordinates } from '../utils/timezones.ts'
+import {
+  getTimeZoneDisplayLabelAtLocalTime,
+  inferTimeZoneFromCoordinates,
+  validateBirthLocalTime,
+} from '../utils/timezones.ts'
 import {
   formatCoordinate,
   isCoordinateDraft,
@@ -114,11 +118,16 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
   }, [inferredTimezone, year, month, day, hour, minute, unknownTime])
 
   function getTimezoneValidationError(state: SavedFormState): string | null {
-    if (!inferTimeZoneFromCoordinates(state.latitude, state.longitude)) {
-      return t('form.timezoneAutoDetectFailed')
-    }
-
-    return null
+    const effectiveHour = state.unknownTime ? 12 : state.hour
+    const effectiveMinute = state.unknownTime ? 0 : state.minute
+    const result = validateBirthLocalTime(
+      state.latitude, state.longitude,
+      state.year, state.month, state.day,
+      effectiveHour, effectiveMinute,
+    )
+    if (result.ok) return null
+    if (result.reason === 'dst-gap') return t('form.dstGapError')
+    return t('form.timezoneAutoDetectFailed')
   }
 
   function buildBirthInput(state: SavedFormState): BirthInput | null {
@@ -215,6 +224,10 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
   }, [externalState]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isKDT = useMemo(() => isKoreanDaylightTime(year, month, day), [year, month, day])
+  const isKstHistoricalAnomaly = useMemo(
+    () => isKoreanHistoricalTimeAnomaly(year, month, day),
+    [year, month, day],
+  )
 
   function handleCitySelect(city: City) {
     setSelectedCity(city)
@@ -304,6 +317,11 @@ const BirthForm = forwardRef<BirthFormHandle, Props>(function BirthForm({ onSubm
           {isKDT && (
             <div className="mt-2 px-3 py-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg text-sm text-amber-700 dark:text-amber-400 leading-relaxed">
               {t('form.kdt')}
+            </div>
+          )}
+          {!isKDT && isKstHistoricalAnomaly && (
+            <div className="mt-2 px-3 py-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg text-sm text-amber-700 dark:text-amber-400 leading-relaxed">
+              {t('form.kstHistoricalOffset')}
             </div>
           )}
 
